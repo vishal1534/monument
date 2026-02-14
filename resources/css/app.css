@@ -1,0 +1,36 @@
+@media print {
+
+}
+@page {
+    size: letter;
+    /*size: 8.5in 11in;*/
+}
+
+@font-face {
+    font-family: apple-chancery;
+    src: url('../assets/fonts/PS_50.ttf');
+}
+@font-face {
+    font-family: tartine-script-regular;
+    src: url('../assets/fonts/tartinescriptregular.ttf');
+}
+@font-face {
+    font-family: government;
+    src: url('../assets/fonts/mongov.ttf');
+}
+@font-face {
+    font-family: regular-roman;
+    src: url('../assets/fonts/monregro.ttf');
+}
+@font-face {
+    font-family: roman-condensed;
+    src: url('../assets/fonts/monrcon.ttf');
+}
+@font-face {
+    font-family: roman-more-condensed;
+    src: url('../assets/fonts/monrmcon.ttf');
+}
+@font-face {
+    font-family: alternate-gothic;
+    src: url('../assets/fonts/alternate_gothic_no3.ttf');
+}

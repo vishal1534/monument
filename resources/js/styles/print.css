@@ -1,0 +1,82 @@
+.print-elm{
+    display: none !important;
+}
+.printing div{
+    border-color: #000 !important;
+}
+.printing .form-content{
+    width: 100% !important;
+}
+.printing label, .printing input, .printing textarea{
+    font-size: 1rem !important;
+}
+.printing h3, .printing h5, .printing h6{
+    font-size: 1.5rem;
+}
+.printing input, .printing textarea{
+    border-color: transparent !important;
+    background: transparent !important;
+    pointer-events: none;
+    height: auto;
+}
+.printing .non-print-elm{
+    display: none !important;
+}
+.printing .print-elm{
+    display: block !important;
+}
+
+/* custom checkbox styling */
+.memorial-production-checkbox .custom-control-label{
+    font-size: 10px !important;
+    line-height: 2.5;
+
+}
+
+.memorial-production-print-checkbox .custom-control-label::before{
+    border-radius: 0px;
+    border: 1px solid black;
+}
+
+.memorial-production-print-checkbox .custom-control-input:checked ~ .custom-control-label::after {
+    background: none
+}
+
+.memorial-production-pdf-checkbox .custom-control-label::before{
+    border-radius: 0px;
+    border: 2px solid black;
+}
+
+.printable-truckload-table-border th, .printable-truckload-table-border td {
+    border: 1px solid #c4c4c4 !important;
+    width: 25% !important;
+}
+.printing .printable-truckload-table-border th, .printing .printable-truckload-table-border td {
+    border: 1px solid #000 !important;
+    width: 25% !important;
+}
+
+.memorial-table-border th, .memorial-table-border td {
+    border: 1px solid #c4c4c4 !important;
+}
+.printing .memorial-table-border th, .printing .memorial-table-border td {
+    border: 1px solid #000 !important;
+}
+
+.production-table-border th, .production-table-border td {
+    border: 1px solid #c4c4c4 !important;
+}
+.no-border th, .no-border td {
+    border: 0 solid #c4c4c4 !important;
+}
+
+.custom-print-button{
+    font-size: 12px;
+    background: #007BFF;
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 5px
+}
+.border ,.border-right{
+    border-color: #c4c4c4 !important;
+}
+

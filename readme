@@ -1,0 +1,88 @@
+install docker
+composer require laravel/sail --dev
+php artisan sail:install
+./vendor/bin/sail up
+./vendor/bin/sail artisan migrate
+alias sail='bash vendor/bin/sail'
+sail up
+sail down
+
+important commands for docker:
+$ docker-compose up -d
+$ docker ps //to get the container id
+$ docker stop <container_id> //to stop
+$ docker start <container_id> //to start
+$ docker exec -it  <container_id> bash //for running any command like composer and npm direct in container
+in shell: apt install nodejs npm
+$ docker-compose logs //for error logs
+$ docker-compose down
+$ docker container ls -aq // print all running container ids
+$ docker container stop $(docker container ls -aq) // Stop all running containers
+
+$ docker exec -it <id of container> php artisan migrate // Run migration in container
+$ docker exec -it <id of container> php artisan db:seed // to seed all classes in container
+$ docker exec -it <id of container> php artisan db:seed --class=File/Class Name // to seed specific class in container
+
+Important commands for laravel:
+php artisan make:migration create_flights_table //flights table
+php artisan make:migration create_flights_table --create=flights //flights table
+php artisan make:migration add_destination_to_flights_table --table=flights //for adding column
+php artisan migrate //for migrate table structure
+php artisan migrate:rollback --step=1 //rollback last migration
+
+php artisan make:model <name> //for creation of model
+
+php artisan make:controller <name>Controller --resource --model=Photo //for creation of controller with model and resource
+
+php artisan make:factory PostFactory //make Factory
+
+php artisan make:seeder UserSeeder //make seeder
+php artisan db:seed // to seed all classes you have to put class in DatabaseSeeder
+php artisan db:seed --class=UserSeeder // to seed specific class
+php artisan migrate:fresh --seed // for fresh
+
+// Request Class
+php artisan make:request TestRequest
+
+
+MYSql commands
+SELECT SUBSTRING_INDEX(USER(), '@', -1) AS ip,  @@hostname as hostname, @@port as port, DATABASE() as current_database; // get hostname,ip,port etc
+
+//refresh cache
+php artisan key:generate
+composer dump-autoload
+php artisan view:clear
+php artisan route:clear
+php artisan config:clear
+php artisan config:cache
+php artisan cache:clear
+
+//storage link
+./vendor/bin/sail artisan storage:link
+
+//for dbal
+1. composer update --ignore-platform-reqs
+2. composer require doctrine/dbal
+
+//useful links of javat
+https://www.javatpoint.com/laravel-relationship
+
+For saas conversion
+step one
+remove comment in the models where
+use App\Scopes\StoreIDScope;
+and
+ protected static function booted()
+    {
+        static::addGlobalScope(new StoreIDScope);
+    }
+now in controllers search for store_id
+and remove comments where store_id exists
+now in userRolesController.php
+remove following line of code
+->where('title','not like','Admin')
+
+next search in vue files where store_id exists and remove comments from there as well
+now next need to check seeder and migrations.
+also check in database and supper admin exists and role for supper admin
+next in user/Add.vue there will be field Store Domain: remove comment from that field

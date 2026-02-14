@@ -1,0 +1,156 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreateMemorialProductionsTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('memorial_productions', function (Blueprint $table) {
+            $table->id();
+            $table->string('name')->nullable();
+            $table->string('last_name')->nullable();
+            $table->string('address')->nullable();
+            $table->string('ship_to_address')->nullable();
+            $table->string('trucking')->nullable();
+            $table->dateTime('request_date')->nullable();
+            $table->string('sales_rep')->nullable();
+            $table->string('details_source_row_1')->nullable();
+            $table->string('details_source_row_2')->nullable();
+            $table->string('details_source_row_3')->nullable();
+            $table->string('details_entry_row_1')->nullable();
+            $table->string('details_entry_row_2')->nullable();
+            $table->string('details_entry_row_3')->nullable();
+            $table->string('details_color_row_1')->nullable();
+            $table->string('details_color_row_2')->nullable();
+            $table->string('details_color_row_3')->nullable();
+            $table->string('details_desc_row_1')->nullable();
+            $table->string('details_desc_row_2')->nullable();
+            $table->string('details_desc_row_3')->nullable();
+            $table->tinyInteger('design_none')->nullable();
+            $table->string('desc_design_none')->nullable();
+            $table->tinyInteger('design_curve')->nullable();
+            $table->string('desc_design_curve')->nullable();
+            $table->tinyInteger('design_shape')->nullable();
+            $table->string('desc_design_shape')->nullable();
+            $table->tinyInteger('design_deluxe')->nullable();
+            $table->string('desc_design_deluxe')->nullable();
+            $table->tinyInteger('design_skin')->nullable();
+            $table->string('desc_design_skin')->nullable();
+            $table->tinyInteger('design_precision')->nullable();
+            $table->string('desc_design_precision')->nullable();
+            $table->tinyInteger('design_diamond')->nullable();
+            $table->string('desc_design_diamond')->nullable();
+            $table->tinyInteger('design_laser')->nullable();
+            $table->string('desc_design_laser')->nullable();
+            $table->tinyInteger('attach_precious_portrait')->nullable();
+            $table->tinyInteger('recess_precious_portrait')->nullable();
+            $table->tinyInteger('panel_single_fn')->nullable();
+            $table->tinyInteger('panel_single_ins')->nullable();
+            $table->tinyInteger('panel_single_vrs')->nullable();
+            $table->tinyInteger('panel_double_fn')->nullable();
+            $table->tinyInteger('panel_double_ins')->nullable();
+            $table->tinyInteger('panel_double_vrs')->nullable();
+            $table->tinyInteger('panel_none_fn')->nullable();
+            $table->tinyInteger('panel_none_ins')->nullable();
+            $table->tinyInteger('panel_none_vrs')->nullable();
+            $table->string('desc_panel_other_1')->nullable();
+            $table->tinyInteger('panel_other_1_fn')->nullable();
+            $table->tinyInteger('panel_other_1_ins')->nullable();
+            $table->tinyInteger('panel_other_1_vrs')->nullable();
+            $table->string('desc_panel_other_2')->nullable();
+            $table->tinyInteger('panel_other_2_fn')->nullable();
+            $table->tinyInteger('panel_other_2_ins')->nullable();
+            $table->tinyInteger('panel_other_2_vrs')->nullable();
+            $table->tinyInteger('darkening_no_artificial')->nullable();
+            $table->tinyInteger('darkening_transparent_gray')->nullable();
+            $table->tinyInteger('darkening_dark_gray')->nullable();
+            $table->tinyInteger('darkening_black_shadow')->nullable();
+            $table->tinyInteger('whitening_no_artificial')->nullable();
+            $table->tinyInteger('whitening_hilite')->nullable();
+            $table->tinyInteger('whitening_heavy_hilite')->nullable();
+            $table->tinyInteger('fonts_cqc_fn')->nullable();
+            $table->tinyInteger('fonts_cqc_ins')->nullable();
+            $table->tinyInteger('fonts_cqc_vrs')->nullable();
+            $table->tinyInteger('fonts_govt_fn')->nullable();
+            $table->tinyInteger('fonts_govt_ins')->nullable();
+            $table->tinyInteger('fonts_govt_vrs')->nullable();
+            $table->tinyInteger('fonts_roman_fn')->nullable();
+            $table->tinyInteger('fonts_roman_ins')->nullable();
+            $table->tinyInteger('fonts_roman_vrs')->nullable();
+            $table->tinyInteger('fonts_runstone_fn')->nullable();
+            $table->tinyInteger('fonts_runstone_ins')->nullable();
+            $table->tinyInteger('fonts_runstone_vrs')->nullable();
+            $table->tinyInteger('fonts_connected_fn')->nullable();
+            $table->tinyInteger('fonts_connected_ins')->nullable();
+            $table->tinyInteger('fonts_connected_vrs')->nullable();
+            $table->tinyInteger('fonts_helvetica_fn')->nullable();
+            $table->tinyInteger('fonts_helvetica_ins')->nullable();
+            $table->tinyInteger('fonts_helvetica_vrs')->nullable();
+            $table->tinyInteger('fonts_opti_fn')->nullable();
+            $table->tinyInteger('fonts_opti_ins')->nullable();
+            $table->tinyInteger('fonts_opti_vrs')->nullable();
+            $table->tinyInteger('fonts_vermarco_fn')->nullable();
+            $table->tinyInteger('fonts_vermarco_ins')->nullable();
+            $table->tinyInteger('fonts_vermarco_vrs')->nullable();
+            $table->tinyInteger('fonts_gothic_fn')->nullable();
+            $table->tinyInteger('fonts_gothic_ins')->nullable();
+            $table->tinyInteger('fonts_gothic_vrs')->nullable();
+            $table->string('fonts_other_desc')->nullable();
+            $table->tinyInteger('fonts_other_fn')->nullable();
+            $table->tinyInteger('fonts_other_ins')->nullable();
+            $table->tinyInteger('fonts_other_vrs')->nullable();
+            $table->tinyInteger('carving_vsunk_fn')->nullable();
+            $table->tinyInteger('carving_vsunk_ins')->nullable();
+            $table->tinyInteger('carving_vsunk_vrs')->nullable();
+            $table->tinyInteger('carving_usunk_fn')->nullable();
+            $table->tinyInteger('carving_usunk_ins')->nullable();
+            $table->tinyInteger('carving_usunk_vrs')->nullable();
+            $table->tinyInteger('carving_shallow_fn')->nullable();
+            $table->tinyInteger('carving_shallow_ins')->nullable();
+            $table->tinyInteger('carving_shallow_vrs')->nullable();
+            $table->tinyInteger('carving_skin_fn')->nullable();
+            $table->tinyInteger('carving_skin_ins')->nullable();
+            $table->tinyInteger('carving_skin_vrs')->nullable();
+            $table->tinyInteger('carving_polish_not_clean_fn')->nullable();
+            $table->tinyInteger('carving_polish_not_clean_ins')->nullable();
+            $table->tinyInteger('carving_polish_not_clean_vrs')->nullable();
+            $table->tinyInteger('carving_polish_clean_fn')->nullable();
+            $table->tinyInteger('carving_polish_clean_ins')->nullable();
+            $table->tinyInteger('carving_polish_clean_vrs')->nullable();
+            $table->tinyInteger('carving_frosted_inlaid_fn')->nullable();
+            $table->tinyInteger('carving_frosted_inlaid_ins')->nullable();
+            $table->tinyInteger('carving_frosted_inlaid_vrs')->nullable();
+            $table->tinyInteger('carving_polish_inlaid_fn')->nullable();
+            $table->tinyInteger('carving_polish_inlaid_ins')->nullable();
+            $table->tinyInteger('carving_polish_inlaid_vrs')->nullable();
+            $table->tinyInteger('carving_frosted_edge_fn')->nullable();
+            $table->tinyInteger('carving_frosted_edge_ins')->nullable();
+            $table->tinyInteger('carving_frosted_edge_vrs')->nullable();
+            $table->tinyInteger('carving_polish_edge_fn')->nullable();
+            $table->tinyInteger('carving_polish_edge_ins')->nullable();
+            $table->tinyInteger('carving_polish_edge_vrs')->nullable();
+            $table->tinyInteger('carving_shadow_bar_fn')->nullable();
+            $table->tinyInteger('carving_shadow_bar_ins')->nullable();
+            $table->tinyInteger('carving_shadow_bar_vrs')->nullable();
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('memorial_productions');
+    }
+}
