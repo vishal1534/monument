@@ -76,7 +76,10 @@ class CompanyController extends Controller
 
         $company = new Company;
         $request = $request->all();
-        $queryData = json_decode($request['queryData']);
+        $queryData = json_decode($request['queryData'] ?? '[]');
+
+        // $queryData = json_decode($request['queryData']);
+        // $queryData = json_decode($request->input('queryData'));
         $queryData = $queryData[0];
         $sortDirection = $queryData->sortDirection;
         $columnTableName = $queryData->columnTableName;
