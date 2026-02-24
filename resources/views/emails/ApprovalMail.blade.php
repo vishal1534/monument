@@ -1,5 +1,10 @@
 @component('mail::message',['imgUrl'=>$imgUrl])
+
+@if(isset($params['order']))
 # Approval Needed Mail for Order #{{ $params['order'] }}
+@else
+# Approval Needed Mail for Order #{{ $params['work_order_id'] }}
+@endif
 
 Hi {{ $params['name'] }}, <br>
 {{ $params['message'] }}

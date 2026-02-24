@@ -1,5 +1,7 @@
 @component('mail::message')
+@if(!empty($params['order']))
 # Collaboration Mail for Order #{{ $params['order'] }}
+@endif
 
 Hi, {{ $params['name'] }} <br>
 {{ $params['message'] }}

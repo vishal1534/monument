@@ -51,7 +51,6 @@ class UserController extends Controller
          * $user[0]['auth_token'] = $token;
          *  return response()->json($user);
          */
-
     }
 
     public function userFamiliesInfo()
@@ -63,7 +62,7 @@ class UserController extends Controller
          * 3- Admin will search this family in user add section search functionality will also added later
          * 4- Admin will search and add this family to user
          */
-//        $family = new Family();
+        //        $family = new Family();
         $families = Family::all();
         return response()->json($families);
     }
@@ -100,7 +99,6 @@ class UserController extends Controller
             ProcessException::dispatch($e->getMessage());
             return response()->json($e);
         }
-
     }
 
     public function register(Request $request)
@@ -210,7 +208,6 @@ class UserController extends Controller
          * 'error' =>['The provided credentials are incorrect.']
          * ]);
          */
-
     }
 
     public function logout()
@@ -222,17 +219,18 @@ class UserController extends Controller
          * Auth::user()->tokens()->delete();
          * Auth::guard('web')->logout();
          */
-
     }
 
     public function forgetPassword(Request $request)
     {
-        $request->validate([
-            'email' => 'required|email|exists:users',
-        ],
+        $request->validate(
+            [
+                'email' => 'required|email|exists:users',
+            ],
             [
                 'email.exists' => "We can't find a user with that e-mail address.",
-            ]);
+            ]
+        );
 
         $token = Str::random(64);
 
@@ -261,13 +259,15 @@ class UserController extends Controller
 
     public function resetPassword(Request $request)
     {
-        $request->validate([
-            'email' => 'required|email|exists:users',
-            'password' => 'required|min:8|confirmed',
-        ],
+        $request->validate(
+            [
+                'email' => 'required|email|exists:users',
+                'password' => 'required|min:8|confirmed',
+            ],
             [
                 'email.exists' => "We can't find a user with that e-mail address.!",
-            ]);
+            ]
+        );
 
         $updatePassword = PasswordReset::where([
             'email' => $request->email,
@@ -289,18 +289,19 @@ class UserController extends Controller
         return response()->json([
             'message' => 'Your password has been changed!'
         ], 200);
-
     }
 
     public function verifyUser(Request $request)
     {
-        $request->validate([
-            'email' => 'required|email|exists:users',
-            'password' => 'required|min:8|confirmed',
-        ],
+        $request->validate(
+            [
+                'email' => 'required|email|exists:users',
+                'password' => 'required|min:8|confirmed',
+            ],
             [
                 'email.exists' => "We can't find a user with that e-mail address.!",
-            ]);
+            ]
+        );
 
 
         $verifyToken = User::where([
@@ -320,7 +321,6 @@ class UserController extends Controller
             throw ValidationException::withMessages([
                 'error' => ['Invalid token!']
             ]);
-
         }
 
 
@@ -347,13 +347,12 @@ class UserController extends Controller
             throw ValidationException::withMessages([
                 'error' => ['The provided credentials are incorrect.']
             ]);
-
         } else {
 
             $user = User::where('email', $request->email)
                 ->update(['email_verified_at' => Carbon::now(), 'status' => 1]);
             //$user = new User();
-//            $user = $user->with(['role'])->where('id', auth('sanctum')->user()->id)->get();
+            //            $user = $user->with(['role'])->where('id', auth('sanctum')->user()->id)->get();
             $user = User::where('email', $request->email)->first();
             $userToken = $user->createToken('auth_token')->plainTextToken;
             $user = $user->with(['role', 'store'])->where('id', $user->id)->get();
@@ -361,19 +360,18 @@ class UserController extends Controller
 
             return response()->json($user, 200);
         }
-
     }
 
     public function index()
     {
         // $users = new User();
-//        $users = $users->with(['invoice', 'user', 'products.Monument'])->orderBy('id', 'desc')->get();
+        //        $users = $users->with(['invoice', 'user', 'products.Monument'])->orderBy('id', 'desc')->get();
         $users = User::with('role', 'store')
             ->whereHas('role', function ($query) {
                 //$query->where('title', '!=', 'Admin');
             })
             ->orderBy('id', 'desc')->get();
-//        $users = $users->orderBy('id', 'desc')->get();
+        //        $users = $users->orderBy('id', 'desc')->get();
 
         return response()->json($users);
     }
@@ -381,8 +379,7 @@ class UserController extends Controller
     public function getPaginationRecord()
     {
         $users = User::with($this->relations)
-            ->whereHas('role', function ($query) {
-            })
+            ->whereHas('role', function ($query) {})
             ->orderBy('id', 'desc')->paginate(10);
         return response()->json($users);
     }
@@ -424,7 +421,6 @@ class UserController extends Controller
                 if ($userPasswordStatus && !empty($userPasswordStatus['email'])) {
                     $user['password_status'] = $userPasswordStatus['password_status'];
                 }
-
             }
 
             /*if (Auth::user()->role->title == $this->userSupperRoleTitle && isset($user['store_id']) && !empty($user['store_id'])){
@@ -438,7 +434,6 @@ class UserController extends Controller
             }*/
             $userInstance = User::updateOrCreate(['id' => $user['id']], $user);
             return response()->json($userInstance->load(['role', 'store']));
-
         } catch (Exception $e) {
             ProcessException::dispatch($e->getMessage());
             return response()->json(['errors' => $e->getMessage()]);
@@ -449,13 +444,15 @@ class UserController extends Controller
     {
 
         $message = null;
-        $request->validate([
-            'email' => 'required|email|exists:users',
-            'password' => 'required|min:8|confirmed',
-        ],
+        $request->validate(
+            [
+                'email' => 'required|email|exists:users',
+                'password' => 'required|min:8|confirmed',
+            ],
             [
                 'email.exists' => "We can't find a user with that e-mail address.",
-            ]);
+            ]
+        );
 
         $verifyToken = User::where([
             'email' => $request->email,
@@ -480,15 +477,12 @@ class UserController extends Controller
                 'error' => ['The provided credentials are incorrect.']
             ]);
         }
-
-
     }
 
     public function show(User $user)
     {
 
-        $user = User::where('id', $user->id)->
-        whereHas('role', function ($query) {
+        $user = User::where('id', $user->id)->whereHas('role', function ($query) {
             $query->where('title', '!=', 'Admin');
             $query->where('title', '!=', 'Supper Admin');
         })
@@ -497,7 +491,6 @@ class UserController extends Controller
             $user->load('role', 'store');
         }
         return response()->json($user);
-
     }
 
     public function destroy(User $user)
@@ -514,7 +507,6 @@ class UserController extends Controller
          $user->products()->delete();
          return $user->delete();*/
         return $user->delete();
-
     }
 
     public function getColumns()
@@ -559,7 +551,8 @@ class UserController extends Controller
                 return response()->json($user->with($this->relations)->orderBy(
                     $childClassName::select($sortByColumn)
                         ->whereColumn('id', 'users.' . $foreignKey)
-                        ->orderBy($sortByColumn, $sortDirection), $sortDirection
+                        ->orderBy($sortByColumn, $sortDirection),
+                    $sortDirection
                 )
                     ->whereHas('role', function ($query) {
                         $query->where('title', '!=', 'Admin');
@@ -626,5 +619,22 @@ class UserController extends Controller
     {
         $userRole = new UserRole();
         return response()->json($userRole->get());
+    }
+
+    public function updateUserRole(Request $request)
+    {
+        $roleId = $request->query('role_id', 1);
+        $userId = $request->query('user_id', 1);
+
+        $user = User::find($userId);
+
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        $user->role_id = $roleId;
+        $user->save(); // use save() instead of update() on a model instance
+
+        return response()->json(['message' => 'User role updated successfully']);
     }
 }
