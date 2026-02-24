@@ -209,6 +209,10 @@
                             <li class="dropdown-submenu">
                                 <router-link class="dropdown-item custom-navbar-dropdown" exact to="/equipment-list">Equipment List</router-link>
                             </li>
+
+                            <li class="dropdown-submenu">
+                                <router-link class="dropdown-item custom-navbar-dropdown" exact to="/workorder-collaborator-list">WO Collaborators List</router-link>
+                            </li>
                             <li class="dropdown-submenu">
                                 <router-link class="dropdown-item custom-navbar-dropdown" exact to="/maintenance-work-order-list">Work Orders</router-link>
                             </li>
@@ -217,6 +221,9 @@
                                 <ul class="dropdown-menu">
                                     <router-link class="dropdown-item custom-navbar-dropdown" exact to="/printable-maintenance-work-order">Work Order</router-link>
                                 </ul>
+                            </li>
+                            <li class="dropdown-submenu">
+                                <router-link class="dropdown-item custom-navbar-dropdown" exact to="/maintenance-work-order-list">Work Orders Report</router-link>
                             </li>
                         </ul>
                     </li>
