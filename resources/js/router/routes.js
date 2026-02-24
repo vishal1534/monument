@@ -1,6 +1,6 @@
 import axios from 'axios';
-import {isLoggedIn} from "../helpers/axios";
-import {watch} from "vue";
+import { isLoggedIn } from "../helpers/axios";
+import { watch } from "vue";
 
 
 /*import Master from '../layout/Master';
@@ -274,6 +274,12 @@ let CollaboratorList = () => import(/* webpackChunkName: "collaborator_list" */ 
 let CollaboratorTypeAdd = () => import(/* webpackChunkName: "collaborator_type_add" */ '../pages/collaborator-type/Add');
 let CollaboratorTypeList = () => import(/* webpackChunkName: "collaborator_type_list" */ '../pages/collaborator-type/List');
 
+let WorkOrderCollaboratorList = () => import(/* webpackChunkName: "workordercollaborater_list"  */ '../pages/workorder-collaborator/List')
+let WorkorderCollaboratorAdd = () => import(/* webpackChunkName: "workordercollaborator_add" */ '../pages/workorder-collaborator/Add');
+
+let WorkOrderCollaboratorTypeAdd = () => import(/* webpackChunkName: "work_order_collaborator_type_add" */ '../pages/workorder-collaborator-type/Add');
+let WorkOrderCollaboratorTypeList = () => import(/* webpackChunkName: "work_order_collaborator_type_list" */ '../pages/workorder-collaborator-type/List');
+
 let CompositeAdd = () => import(/* webpackChunkName: "composite_add" */ '../pages/composite/Add');
 let CompositeList = () => import(/* webpackChunkName: "composite_list" */ '../pages/composite/List');
 
@@ -376,11 +382,12 @@ let CustomerCollaborationList = () => import(/* webpackChunkName: "customer_coll
 let CustomerCollaboration = () => import(/* webpackChunkName: "customer_collaboration" */ '../pages/customer-collaboration/Collaboration');
 
 
+
 const isAuthenticated = (to, from, next) => {
     isLoggedIn((response) => {
         next()
     }, (error) => {
-        return next({name: 'Login', query: {redirect: to.path}})
+        return next({ name: 'Login', query: { redirect: to.path } })
     });
 
 };
@@ -391,13 +398,13 @@ const checkIsCustomer = (to, from, next) => {
             authUser = JSON.parse(localStorage.getItem('authUser'));
         if (authUser.user && authUser.user.role) {
             if (authUser.user.role.title == 'Customer') {
-                next({name: 'CustomerPortal'})
+                next({ name: 'CustomerPortal' })
             } else {
                 next()
             }
         }
     }, (error) => {
-        return next({name: 'Login', query: {redirect: to.path}})
+        return next({ name: 'Login', query: { redirect: to.path } })
     });
 };
 
@@ -417,7 +424,7 @@ const routes = [
         name: 'Register',
         beforeEnter: (to, form, next) => {
             axios.get('/api/authenticated').then(() => {
-                return next({name: 'Dashboard'})
+                return next({ name: 'Dashboard' })
             }).catch(() => {
                 next()
             })
@@ -429,7 +436,7 @@ const routes = [
         name: 'Login',
         beforeEnter: (to, form, next) => {
             axios.get('/api/authenticated').then(() => {
-                return next({name: 'Dashboard'})
+                return next({ name: 'Dashboard' })
             }).catch(() => {
                 next()
             })
@@ -441,7 +448,7 @@ const routes = [
         name: 'ForgetPassword',
         beforeEnter: (to, form, next) => {
             axios.get('/api/authenticated').then(() => {
-                return next({name: 'Dashboard'})
+                return next({ name: 'Dashboard' })
             }).catch(() => {
                 next()
             })
@@ -453,7 +460,7 @@ const routes = [
         name: 'ResetPassword',
         beforeEnter: (to, form, next) => {
             axios.get('/api/authenticated').then(() => {
-                return next({name: 'Dashboard'})
+                return next({ name: 'Dashboard' })
             }).catch(() => {
                 next()
             })
@@ -465,7 +472,7 @@ const routes = [
         name: 'UserVerification',
         beforeEnter: (to, form, next) => {
             axios.get('/api/authenticated').then(() => {
-                return next({name: 'Dashboard'})
+                return next({ name: 'Dashboard' })
             }).catch(() => {
                 next()
             })
@@ -477,7 +484,7 @@ const routes = [
         name: 'CreatePassword',
         beforeEnter: (to, form, next) => {
             axios.get('/api/authenticated').then(() => {
-                return next({name: 'Dashboard'})
+                return next({ name: 'Dashboard' })
             }).catch(() => {
                 next()
             })
@@ -487,13 +494,13 @@ const routes = [
     {
         path: '/',
         component: Dashboard,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: checkIsCustomer,
     },
     {
         path: '/dashboard',
         component: Dashboard,
-        meta: {layout: Master},
+        meta: { layout: Master },
         name: 'Dashboard',
         beforeEnter: checkIsCustomer,
     },
@@ -503,15 +510,15 @@ const routes = [
     {
         path: '/productions',
         component: ProductionAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/productions/:id',
         component: ProductionAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -520,7 +527,7 @@ const routes = [
     {
         path: '/production-list',
         component: ProductionList,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props: true,
         beforeEnter: isAuthenticated,
     },
@@ -528,21 +535,21 @@ const routes = [
     {
         path: '/printable-laser-production',
         component: PrintableLaserProductionAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/laser-production',
         component: LaserProductionAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/laser-production/:id',
         component: LaserProductionAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -551,27 +558,27 @@ const routes = [
     {
         path: '/laser-production-list',
         component: LaserProductionList,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/maintenance-work-order-list',
         component: MaintenanceWorkOrderList,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/maintenance-work-order',
         component: MaintenanceWorkOrderAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/maintenance-work-order/:id',
         component: MaintenanceWorkOrderAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -580,7 +587,7 @@ const routes = [
     {
         path: '/printable-maintenance-work-order',
         component: PrintableMaintenanceWorkOrder,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
 
@@ -588,21 +595,21 @@ const routes = [
     {
         path: '/printable-picture-production',
         component: PrintablePorcelainProductionAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/picture-production',
         component: PictureProductionAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/picture-production/:id',
         component: PictureProductionAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -611,28 +618,28 @@ const routes = [
     {
         path: '/picture-production-list',
         component: PictureProductionList,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
 
     {
         path: '/printable-sandblasting-production',
         component: PrintableSandblastingProductionAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/sandblasting-production',
         component: SandblastingProductionAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/sandblasting-production/:id',
         component: SandblastingProductionAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -640,7 +647,7 @@ const routes = [
     {
         path: '/sandblasting-production-list',
         component: SandblastingProductionList,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
 
@@ -650,15 +657,15 @@ const routes = [
     {
         path: '/cemeteries',
         component: CemeteryAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/cemeteries/:id',
         component: CemeteryAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -667,7 +674,7 @@ const routes = [
     {
         path: '/cemetery-list',
         component: CemeteryList,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props: true,
         beforeEnter: isAuthenticated,
     },
@@ -678,15 +685,15 @@ const routes = [
     {
         path: '/cemetery-category',
         component: CemeteryCategoryAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/cemetery-category/:id',
         component: CemeteryCategoryAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -695,7 +702,7 @@ const routes = [
     {
         path: '/cemetery-category-list',
         component: CemeteryCategoryList,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props: true,
         beforeEnter: isAuthenticated,
     },
@@ -707,9 +714,9 @@ const routes = [
         name: 'Orders',
         path: '/orders',
         component: OrderAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.quote_to_order_id = +props.quote_to_order_id;
             return props;
         },
@@ -718,9 +725,9 @@ const routes = [
     {
         path: '/orders/:id',
         component: OrderAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -729,7 +736,7 @@ const routes = [
     {
         path: '/order-list',
         component: OrderList,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
 
@@ -740,15 +747,15 @@ const routes = [
         path: '/quotes',
         alias: ['/quote', '/quoteAdd'],
         component: QuoteAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/quotes/:id',
         component: QuoteAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -757,7 +764,7 @@ const routes = [
     {
         path: '/quote-list',
         component: QuoteList,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
 
@@ -767,21 +774,21 @@ const routes = [
     {
         path: '/installation-printable-form',
         component: PrintableInstalltionForm,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/order-installation',
         component: OrderInstallationAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/order-installation/:id',
         component: OrderInstallationAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -791,9 +798,9 @@ const routes = [
         name: 'production_install',
         path: '/production-install/:id',
         component: OrderInstallationAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             props.production_id = +props.production_id;
             return props;
@@ -804,15 +811,15 @@ const routes = [
     {
         path: '/order-form',
         component: OrderForm,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/order-form/:id',
         component: OrderForm,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -821,28 +828,28 @@ const routes = [
     {
         path: '/printable-order-form',
         component: PrintableOrderForm,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
 
     {
         path: '/brick-printable-form',
         component: PrintableBrickForm,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/brick-form',
         component: BrickForm,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/brick-form/:id',
         component: BrickForm,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -852,21 +859,21 @@ const routes = [
     {
         path: '/granit-bronz-memorial-printable-form',
         component: PrintableGranitBronzMemorialForm,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/granit-bronz-memorial-form',
         component: GranitBronzMemorialForm,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/granit-bronz-memorial-form/:id',
         component: GranitBronzMemorialForm,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -876,21 +883,21 @@ const routes = [
     {
         path: '/granit-bronz-precious-printable-form',
         component: PrintableGranitBronzPreciousForm,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/granit-bronz-precious-form',
         component: GranitBronzPreciousForm,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/granit-bronz-precious-form/:id',
         component: GranitBronzPreciousForm,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -900,15 +907,15 @@ const routes = [
     {
         path: '/monument-agreement',
         component: MonumentAgreementAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/monument-agreement/:id',
         component: MonumentAgreementAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -917,22 +924,22 @@ const routes = [
     {
         path: '/printable-monument-agreement',
         component: PrintableMonumentAgreement,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
 
     {
         path: '/monument-work-order',
         component: MonumentWorkOrderAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/monument-work-order/:id',
         component: MonumentWorkOrderAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -941,22 +948,22 @@ const routes = [
     {
         path: '/printable-monument-work-order',
         component: PrintableMonumentWorkOrder,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
 
     {
         path: '/final-date',
         component: FinalDateAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/final-date/:id',
         component: FinalDateAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -965,28 +972,28 @@ const routes = [
     {
         path: '/printable-final-date',
         component: PrintableFinalDate,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
 
     {
         path: '/printable-monument-order-notes',
         component: PrintableMonumentOrderNotes,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/monument-order-notes',
         component: MonumentOrderNotesAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/monument-order-notes/:id',
         component: MonumentOrderNotesAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -996,21 +1003,21 @@ const routes = [
     {
         path: '/printable-porcelain',
         component: PrintablePorcelain,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/porcelain',
         component: PorcelainAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/porcelain/:id',
         component: PorcelainAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -1019,9 +1026,9 @@ const routes = [
         name: 'production_porcelain',
         path: '/production-porcelain/:id',
         component: PorcelainAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             props.production_id = +props.production_id;
             return props;
@@ -1032,21 +1039,21 @@ const routes = [
     {
         path: '/printable-delivery-work-order',
         component: PrintableDeliveryWorkOrder,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/delivery-work-order',
         component: DeliveryWorkOrderAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/delivery-work-order/:id',
         component: DeliveryWorkOrderAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -1056,15 +1063,15 @@ const routes = [
     {
         path: '/memorial-production',
         component: MemorialProductionAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/memorial-production/:id',
         component: MemorialProductionAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -1073,10 +1080,10 @@ const routes = [
     {
         path: '/production-memorial/:id',
         component: MemorialProductionAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         name: 'production_memorial',
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             props.production_id = +props.production_id;
             return props;
@@ -1086,22 +1093,22 @@ const routes = [
     {
         path: '/printable-memorial-production',
         component: PrintableMemorialProduction,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
 
     {
         path: '/approval-monument',
         component: ApprovalMonumentAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/approval-monument/:id',
         component: ApprovalMonumentAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -1111,9 +1118,9 @@ const routes = [
         name: 'production_approval',
         path: '/production-approval/:id',
         component: ApprovalMonumentAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             props.production_id = +props.production_id;
             return props;
@@ -1123,7 +1130,7 @@ const routes = [
     {
         path: '/printable-approval-monument',
         component: PrintableApprovalMonument,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
 
@@ -1133,15 +1140,15 @@ const routes = [
     {
         path: '/collaborations',
         component: CollaborationAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/collaboration/:id',
         component: CollaborationAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -1150,16 +1157,16 @@ const routes = [
     {
         path: '/collaboration-list',
         component: CollaborationList,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props: true,
         beforeEnter: isAuthenticated,
     },
     {
         path: '/upload-files/:id',
         component: CollaborationFileUpload,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = props.id;
             return props;
         },
@@ -1169,15 +1176,14 @@ const routes = [
     {
         path: '/task-collaboration-list',
         component: TaskCollaborationReport,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props: true,
         beforeEnter: isAuthenticated,
     },
-
     {
         path: '/correspondence-list',
         component: CorrespondanceReport,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props: true,
         beforeEnter: isAuthenticated,
     },
@@ -1189,15 +1195,15 @@ const routes = [
     {
         path: '/collaborators',
         component: CollaboratorAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/collaborator/:id',
         component: CollaboratorAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -1206,7 +1212,7 @@ const routes = [
     {
         path: '/collaborator-list',
         component: CollaboratorList,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props: true,
         beforeEnter: isAuthenticated,
     },
@@ -1217,15 +1223,15 @@ const routes = [
     {
         path: '/collaborator-types',
         component: CollaboratorTypeAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/collaborator-type/:id',
         component: CollaboratorTypeAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -1234,10 +1240,66 @@ const routes = [
     {
         path: '/collaboratorType-list',
         component: CollaboratorTypeList,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props: true,
         beforeEnter: isAuthenticated,
     },
+
+
+    // workorder 
+    // Collaborator routes 
+
+    {
+        path: '/workorder-collaborator-list',
+        component: WorkOrderCollaboratorList,
+        meta: { layout: Master },
+        props: true,
+        beforeEnter: isAuthenticated,
+    },
+    {
+        path: '/workorder-collaborators',
+        component: WorkorderCollaboratorAdd,
+        meta: { layout: Master },
+        beforeEnter: isAuthenticated,
+    },
+    {
+        path: '/workorder-collaborator/:id',
+        component: WorkorderCollaboratorAdd,
+        meta: { layout: Master },
+        props(route) {
+            const props = { ...route.params };
+            props.id = +props.id;
+            return props;
+        },
+        beforeEnter: isAuthenticated,
+    },
+
+    {
+        path: '/work-order-collaboratorType-list',
+        component: WorkOrderCollaboratorTypeList,
+        meta: { layout: Master },
+        props: true,
+        beforeEnter: isAuthenticated,
+    },
+
+    {
+        path: '/work-order-collaborator-types',
+        component: WorkOrderCollaboratorTypeAdd,
+        meta: { layout: Master },
+        beforeEnter: isAuthenticated,
+    },
+    {
+        path: '/work-order-collaborator-type/:id',
+        component: WorkOrderCollaboratorTypeAdd,
+        meta: { layout: Master },
+        props(route) {
+            const props = { ...route.params };
+            props.id = +props.id;
+            return props;
+        },
+        beforeEnter: isAuthenticated,
+    },
+
 
     /**
      * Accounting Routes
@@ -1245,15 +1307,15 @@ const routes = [
     {
         path: '/accountings',
         component: AccountingAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/accountings/:id',
         component: AccountingAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -1262,7 +1324,7 @@ const routes = [
     {
         path: '/accounting-list',
         component: AccountingList,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
 
@@ -1272,15 +1334,15 @@ const routes = [
     {
         path: '/company',
         component: CompanyAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/company/:id',
         component: CompanyAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -1289,7 +1351,7 @@ const routes = [
     {
         path: '/company-list',
         component: CompanyList,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
 
@@ -1300,20 +1362,20 @@ const routes = [
         path: '/user',
         component: UserAdd,
         beforeEnter: isAuthenticated,
-        meta: {layout: Master},
+        meta: { layout: Master },
     },
     {
         path: '/user-list',
         component: UserList,
         beforeEnter: isAuthenticated,
-        meta: {layout: Master},
+        meta: { layout: Master },
     },
     {
         path: '/user/:id',
         component: UserAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -1327,20 +1389,20 @@ const routes = [
         path: '/paper-location',
         component: PaperLocationAdd,
         beforeEnter: isAuthenticated,
-        meta: {layout: Master},
+        meta: { layout: Master },
     },
     {
         path: '/paper-location-list',
         component: PaperLocationList,
         beforeEnter: isAuthenticated,
-        meta: {layout: Master},
+        meta: { layout: Master },
     },
     {
         path: '/paper-location/:id',
         component: PaperLocationAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -1353,15 +1415,15 @@ const routes = [
     {
         path: '/department',
         component: DepartmentAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/department/:id',
         component: DepartmentAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -1370,7 +1432,7 @@ const routes = [
     {
         path: '/department-list',
         component: DepartmentList,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
 
@@ -1380,15 +1442,15 @@ const routes = [
     {
         path: '/cost-per-squre-feet',
         component: CostSqureFeetAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/cost-per-squre-feet/:id',
         component: CostSqureFeetAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -1397,7 +1459,7 @@ const routes = [
     {
         path: '/cost-per-squre-feet-list',
         component: CostSqureFeetList,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
 
@@ -1407,15 +1469,15 @@ const routes = [
     {
         path: '/orderstatus',
         component: OrderStatusAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/orderstatus/:id',
         component: OrderStatusAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -1424,7 +1486,7 @@ const routes = [
     {
         path: '/order-status-list',
         component: OrderStatusList,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     /**
@@ -1433,15 +1495,15 @@ const routes = [
     {
         path: '/installation',
         component: InstallationAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/installation/:id',
         component: InstallationAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -1450,28 +1512,28 @@ const routes = [
     {
         path: '/installation-list',
         component: InstallationList,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
 
     {
         path: '/printable-weekly-schedule',
         component: PrintableWeeklySchedule,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/weekly-schedule',
         component: WeeklyScheduleAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/weekly-schedule/:id',
         component: WeeklyScheduleAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -1480,28 +1542,28 @@ const routes = [
     {
         path: '/weekly-schedule-list',
         component: WeeklyScheduleList,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
 
     {
         path: '/printable-installation-load',
         component: PrintableInstallationLoad,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/installation-load',
         component: InstallationLoadAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/installation-load/:id',
         component: InstallationLoadAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -1510,36 +1572,36 @@ const routes = [
     {
         path: '/installation-load-list',
         component: InstallationLoadList,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
 
     {
         path: '/printable-truck-load',
         component: PrintableTruckLoad,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/truck-load',
         component: TruckLoadAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/truck-load-install',
         component: TruckLoadAddInstall,
         name: 'TruckLoadAddInstall',
-        meta: {layout: Master},
+        meta: { layout: Master },
         props: true,
         beforeEnter: isAuthenticated,
     },
     {
         path: '/truck-load/:id',
         component: TruckLoadAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -1548,28 +1610,28 @@ const routes = [
     {
         path: '/truck-load-list',
         component: TruckLoadList,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
 
     {
         path: '/printable-installation-production',
         component: PrintableInstallationProduction,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/installation-production',
         component: InstallationProductionAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/installation-production/:id',
         component: InstallationProductionAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -1578,28 +1640,28 @@ const routes = [
     {
         path: '/installation-production-list',
         component: InstallationProductionList,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
 
     {
         path: '/printable-installation-checklist',
         component: PrintableInstallationChecklist,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/installation-check-list',
         component: InstallationCheckListAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/installation-check-list/:id',
         component: InstallationCheckListAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -1612,15 +1674,15 @@ const routes = [
     {
         path: '/monument-types',
         component: MonumentTypeAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/monument-types/:id',
         component: MonumentTypeAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -1629,7 +1691,7 @@ const routes = [
     {
         path: '/monument-type-list',
         component: MonumentTypeList,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
 
@@ -1639,15 +1701,15 @@ const routes = [
     {
         path: '/monument-sides',
         component: MonumentSideAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/monument-sides/:id',
         component: MonumentSideAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -1656,7 +1718,7 @@ const routes = [
     {
         path: '/monument-side-list',
         component: MonumentSideList,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     /**
@@ -1665,15 +1727,15 @@ const routes = [
     {
         path: '/monument-polish',
         component: MonumentPolishAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/monument-polish/:id',
         component: MonumentPolishAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -1682,7 +1744,7 @@ const routes = [
     {
         path: '/monument-polish-list',
         component: MonumentPolishList,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     /**
@@ -1691,15 +1753,15 @@ const routes = [
     {
         path: '/monument-shapes',
         component: MonumentShapeAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/monument-shapes/:id',
         component: MonumentShapeAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -1708,7 +1770,7 @@ const routes = [
     {
         path: '/monument-shape-list',
         component: MonumentShapeList,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
 
@@ -1718,15 +1780,15 @@ const routes = [
     {
         path: '/monument-colors',
         component: MonumentColorAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/monument-colors/:id',
         component: MonumentColorAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -1735,7 +1797,7 @@ const routes = [
     {
         path: '/monument-color-list',
         component: MonumentColorList,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
 
@@ -1746,7 +1808,7 @@ const routes = [
     {
         path: '/reorder-quantity',
         component: ReOrderQuantityList,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
 
@@ -1757,7 +1819,7 @@ const routes = [
     {
         path: '/production-inventory',
         component: ProductionInventory,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
 
@@ -1768,7 +1830,7 @@ const routes = [
     {
         path: '/display-inventory',
         component: DisplayInventory,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
 
@@ -1779,7 +1841,7 @@ const routes = [
     {
         path: '/sale-product-report',
         component: SaleProductReport,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
 
@@ -1790,7 +1852,7 @@ const routes = [
     {
         path: '/price-sheet-number',
         component: PriceSheetByNumber,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
 
@@ -1800,7 +1862,7 @@ const routes = [
     {
         path: '/price-sheet-number-composite',
         component: PriceSheetByNumberComposite,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
 
@@ -1810,7 +1872,7 @@ const routes = [
     {
         path: '/price-sheet-by-color-and-type',
         component: PriceSheetByColorAndType,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
 
@@ -1820,7 +1882,7 @@ const routes = [
     {
         path: '/sale-report',
         component: SaleReport,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
 
@@ -1830,7 +1892,7 @@ const routes = [
     {
         path: '/production-report',
         component: ProductionReport,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
 
@@ -1841,7 +1903,7 @@ const routes = [
     {
         path: '/price-sheet-color-type-composite',
         component: PriceSheetByColorAndTypeComposite,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
 
@@ -1851,15 +1913,15 @@ const routes = [
     {
         path: '/monuments',
         component: MonumentAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/monuments/:id',
         component: MonumentAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -1868,23 +1930,23 @@ const routes = [
     {
         path: '/monuments-list',
         component: MonumentList,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         name: 'PriceEstimator',
         path: '/price-estimator-list',
         component: MonumentList,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         name: 'QuotePriceEstimator',
         path: '/price-estimator',
         component: MonumentAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.quote_to_price_id = +props.quote_to_price_id;
             return props;
         },
@@ -1893,9 +1955,9 @@ const routes = [
     {
         path: '/price-estimator/:id',
         component: MonumentAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -1908,7 +1970,7 @@ const routes = [
     {
         path: '/product-catalog-list',
         component: ProductCatalogList,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
 
@@ -1918,15 +1980,15 @@ const routes = [
     {
         path: '/composites',
         component: CompositeAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/composites/:id',
         component: CompositeAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -1935,7 +1997,7 @@ const routes = [
     {
         path: '/composite-list',
         component: CompositeList,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
 
     },
@@ -1946,15 +2008,15 @@ const routes = [
     {
         path: '/composite-categories',
         component: CompositeCategoryAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/composite-categories/:id',
         component: CompositeCategoryAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -1963,7 +2025,7 @@ const routes = [
     {
         path: '/composite-category-list',
         component: CompositeCategoryList,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
 
     },
@@ -1974,15 +2036,15 @@ const routes = [
     {
         path: '/simples',
         component: SimpleAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/simples/:id',
         component: SimpleAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -1991,7 +2053,7 @@ const routes = [
     {
         path: '/simple-list',
         component: SimpleList,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
 
@@ -2001,15 +2063,15 @@ const routes = [
     {
         path: '/simple-categories',
         component: SimpleCategoryAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/simple-categories/:id',
         component: SimpleCategoryAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -2018,7 +2080,7 @@ const routes = [
     {
         path: '/simple-category-list',
         component: SimpleCategoryList,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
 
     },
@@ -2029,15 +2091,15 @@ const routes = [
     {
         path: '/services',
         component: ServiceAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/services/:id',
         component: ServiceAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -2046,7 +2108,7 @@ const routes = [
     {
         path: '/service-list',
         component: ServiceList,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
 
@@ -2056,15 +2118,15 @@ const routes = [
     {
         path: '/service-categories',
         component: ServiceCategoryAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/service-categories/:id',
         component: ServiceCategoryAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -2073,7 +2135,7 @@ const routes = [
     {
         path: '/service-category-list',
         component: ServiceCategoryList,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
 
@@ -2083,15 +2145,15 @@ const routes = [
     {
         path: '/roles-manager/',
         component: RolesAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/roles-manager/:id',
         component: RolesAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -2100,7 +2162,7 @@ const routes = [
     {
         path: '/roles-list',
         component: RolesList,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
 
@@ -2110,15 +2172,15 @@ const routes = [
     {
         path: '/supplier',
         component: SupplierAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/supplier/:id',
         component: SupplierAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -2127,7 +2189,7 @@ const routes = [
     {
         path: '/supplier-list',
         component: SupplierList,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
 
@@ -2137,15 +2199,15 @@ const routes = [
     {
         path: '/equipment',
         component: EquipmentAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/equipment/:id',
         component: EquipmentAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -2154,7 +2216,7 @@ const routes = [
     {
         path: '/equipment-list',
         component: EquipmentList,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
 
@@ -2164,22 +2226,22 @@ const routes = [
     {
         path: '/customer-portal',
         component: CustomerPortal,
-        meta: {layout: CustomerMaster},
+        meta: { layout: CustomerMaster },
         name: 'CustomerPortal',
         beforeEnter: isAuthenticated,
     },
     {
         path: '/invoice-list',
         component: CustomerInvoiceList,
-        meta: {layout: CustomerMaster},
+        meta: { layout: CustomerMaster },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/customer-invoice/:id',
         component: CustomerInvoice,
-        meta: {layout: CustomerMaster},
+        meta: { layout: CustomerMaster },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -2192,15 +2254,15 @@ const routes = [
     {
         path: '/customer-order-status-list',
         component: CustomerOrderStatusList,
-        meta: {layout: CustomerMaster},
+        meta: { layout: CustomerMaster },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/customer-order-status/:id',
         component: CustomerOrderStatus,
-        meta: {layout: CustomerMaster},
+        meta: { layout: CustomerMaster },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -2213,15 +2275,15 @@ const routes = [
     {
         path: '/customer-approval-list',
         component: CustomerApprovalList,
-        meta: {layout: CustomerMaster},
+        meta: { layout: CustomerMaster },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/customer-approval/:id',
         component: CustomerApproval,
-        meta: {layout: CustomerMaster},
+        meta: { layout: CustomerMaster },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -2234,15 +2296,15 @@ const routes = [
     {
         path: '/customer-collaboration-list',
         component: CustomerCollaborationList,
-        meta: {layout: CustomerMaster},
+        meta: { layout: CustomerMaster },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/customer-collaboration/:id',
         component: CustomerCollaboration,
-        meta: {layout: CustomerMaster},
+        meta: { layout: CustomerMaster },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -2257,15 +2319,15 @@ const routes = [
     {
         path: '/purchase-order',
         component: PoAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
     {
         path: '/purchase-order/:id',
         component: PoAdd,
-        meta: {layout: Master},
+        meta: { layout: Master },
         props(route) {
-            const props = {...route.params};
+            const props = { ...route.params };
             props.id = +props.id;
             return props;
         },
@@ -2274,7 +2336,7 @@ const routes = [
     {
         path: '/purchase-order-list',
         component: PoList,
-        meta: {layout: Master},
+        meta: { layout: Master },
         beforeEnter: isAuthenticated,
     },
 
