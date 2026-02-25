@@ -52,6 +52,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CostPSqureFeetController;
 use App\Http\Controllers\ProductCatalogController;
 use App\Http\Controllers\TaskCollaborationReportController;
+use App\Http\Controllers\WorkOrderCollaboratorsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -77,6 +78,7 @@ Route::middleware('auth:sanctum')->get('/authenticated', function () {
     return true;
 });
 Route::post('register', [UserController::class, 'register']);
+Route::get('user/user_role',[UserController::class,'updateUserRole']);
 Route::post('login', [UserController::class, 'login']);
 Route::middleware('auth:sanctum')->post('logout', [UserController::class, 'logout']);
 Route::post('forgetPassword', [UserController::class, 'forgetPassword']);
@@ -238,6 +240,27 @@ Route::middleware(['api', 'auth:sanctum'])->group(function () {
         Route::middleware('permission:Collaboration,read')->delete('type/{collaboratorType}', [CollaboratorsController::class, 'deleteCollaboratorType']);
     });
     Route::middleware('permission:Collaboration,resource')->resource('collaborator', CollaboratorsController::class);
+
+    /**
+     * Work-Order Collaborator Routes
+     */
+    Route::prefix('work-order')->group(function () {
+        Route::prefix('collaborator')->group(function () {
+            Route::middleware('permission:Collaboration,read')->get('paginateRecord', [WorkOrderCollaboratorsController::class, 'paginationRecord']);
+            Route::middleware('permission:Collaboration,read')->get('getDropDownRecord', [WorkOrderCollaboratorsController::class, 'dropDownInfo']);
+            Route::middleware('permission:Collaboration,read')->get('next/{collaborator}', [WorkOrderCollaboratorsController::class, 'getNextPrevious']);
+            Route::middleware('permission:Collaboration,read')->get('previous/{collaborator}', [WorkOrderCollaboratorsController::class, 'getNextPrevious']);
+            Route::middleware('permission:Collaboration,read')->get('columns', [WorkOrderCollaboratorsController::class, 'getColumns']);
+            Route::middleware('permission:Collaboration,read')->post('search', [WorkOrderCollaboratorsController::class, 'search']);
+            Route::middleware('permission:Collaboration,read')->get('types', [CollaborationController::class, 'collaboratorTypes']);
+            Route::middleware('permission:Collaboration,read')->get('type', [WorkOrderCollaboratorsController::class, 'getCollaboratorType']);
+            Route::middleware('permission:Collaboration,read')->post('type', [WorkOrderCollaboratorsController::class, 'saveCollaboratorType']);
+            Route::middleware('permission:Collaboration,read')->delete('type/{collaboratorType}', [WorkOrderCollaboratorsController::class, 'deleteCollaboratorType']);
+        });
+        Route::middleware('permission:Collaboration,resource')->resource('collaborator', WorkOrderCollaboratorsController::class);
+    });
+
+
 
     /**
      * Collaborator Type Routes
@@ -962,6 +985,18 @@ Route::middleware(['api', 'auth:sanctum'])->group(function () {
         Route::get('columns', [MaintenanceWorkOrderController::class, 'getColumns']);
         Route::post('search', [MaintenanceWorkOrderController::class, 'search']);
         Route::get('info', [MaintenanceWorkOrderController::class, 'maintenanceWorkOrderInfo']);
+
+
+        /* ------------------ */
+        Route::post('mail', [MaintenanceWorkOrderController::class, 'sendMail']);
+        Route::post('uploadImage', [MaintenanceWorkOrderController::class, 'uploadImage']);
+
+        Route::middleware('permission:Collaboration,delete')->post('deleteFile/{id}', [MaintenanceWorkOrderController::class, 'deleteFile']);
+
+        Route::middleware('permission:Collaboration,create')->post('updateImages', [MaintenanceWorkOrderController::class, 'updateImage']);
+        Route::post('sendApprovalMail', [MaintenanceWorkOrderController::class, 'sendApprovalMail']);
+
+        Route::post('sendCustomerViewMail', [MaintenanceWorkOrderController::class, 'sendCustomerViewMail']);
     });
     Route::middleware('permission:Maintenance,resource')->resource('maintenanceWorkOrder', MaintenanceWorkOrderController::class);
 

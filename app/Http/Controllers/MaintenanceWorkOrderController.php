@@ -3,23 +3,46 @@
 namespace App\Http\Controllers;
 
 use App\Events\ProcessException;
+use App\Http\Requests\AddCollaborationRequest;
 use App\Http\Traits\Accessible;
 use App\Http\Traits\Paginateable;
 use App\Http\Traits\Searchable;
+use App\Mail\CollaborationMail;
+use App\Http\Traits\FileUpload;
+use App\Mail\ApprovalMail;
+use App\Mail\CustomerViewMail;
+use App\Models\CollaboratorMail;
+use App\Models\Department;
+use App\Models\Family;
 use App\Models\MaintenanceWorkOrder;
+use App\Models\WorkOrderCollaborationCollaboratorCheck;
+use App\Models\WorkOrderCollaborationImage;
+use App\Models\WorkOrderCollaborationTask;
+use App\Models\WorkOrderCollaborator;
+use App\Models\WorkOrderCollaboratorMail;
+use App\Models\WorkOrderLog;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\TaskNotification;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Log;
 
 class MaintenanceWorkOrderController extends Controller
 {
-    use Accessible, Paginateable, Searchable;
+    use Accessible, Paginateable, Searchable, FileUpload;
+    public $relations = ['tasks', 'collaboratorMail', 'images.user.role', 'images.rejectedBy.role', 'collaborators.type', 'orderLogs.user', 'collaboratorChecks', 'collaboratorChecks.type'];
 
     public function index()
     {
         try {
             $workOrder = new MaintenanceWorkOrder();
             return response()->json($workOrder->get());
-
         } catch (Exception $ex) {
             ProcessException::dispatch($ex->getMessage());
             return response()->json($ex);
@@ -55,7 +78,17 @@ class MaintenanceWorkOrderController extends Controller
     public function show(MaintenanceWorkOrder $maintenanceWorkOrder)
     {
         try {
-            return response()->json($maintenanceWorkOrder);
+            $res = $maintenanceWorkOrder->load([
+                "tasks",
+                "images",
+                "collaboratorMail",
+                "orderLogs",
+                "collaboratorChecks",
+            ]);
+
+            $all_collabs = WorkOrderCollaborator::all();
+            $res["all_collaborators"] = $all_collabs;
+            return response()->json($res);
         } catch (Exception $ex) {
             ProcessException::dispatch($ex->getMessage());
             return response()->json($ex);
@@ -136,5 +169,323 @@ class MaintenanceWorkOrderController extends Controller
     public function getLast()
     {
         return $this->lastRecord(new MaintenanceWorkOrder, [], 'asc');
+    }
+
+    public function store_data(AddCollaborationRequest $request)
+    {
+        try {
+
+            $data = json_decode($request->data, true);
+
+            $recordInstance = MaintenanceWorkOrder::updateOrCreate(['id' => $data['id']], $data);
+            // $invoiceDetail = $data['order']['invoice'];
+            // $checkOrderStatuschanged = Order::updateOrCreate(['id' => $data['order']['id']], $data['order']);
+            // if (isset($data['order_logs']) && !empty($data['order_logs'])) {
+            //     foreach ($data['order_logs'] as $orderLog) {
+            //         OrderLog::updateOrCreate(['id' => $orderLog['id']], $orderLog);
+            //     }
+            // }
+            if (isset($data['collaborators']) && !empty($data['collaborators'])) {
+                foreach ($data['collaborators'] as $collab) {
+                    if (isset($collab['id']) && !empty($collab['id'])) {
+                        $createCollaborator = null;
+                        $createCollaborator = WorkOrderCollaborator::updateOrCreate(['id' => $collab['id']], $collab);
+                        $id = 0;
+                        if (isset($collab['collaborator_check']) && !empty($collab['collaborator_check'])) {
+                            $id = $collab['collaborator_check'][0]['id'];
+                        }
+                        WorkOrderCollaborationCollaboratorCheck::updateOrCreate(
+                            [
+                                'id' => $id
+                            ],
+                            [
+                                'work_order_id' => $recordInstance->id,
+                                'collaborator_id' => $createCollaborator->id,
+                                'is_check' => $collab['is_box_checked']
+                            ]
+                        );
+                    } elseif (isset($collab['is_custom']) && $collab['is_custom']) {
+                        $isCollaborate = $collab['is_box_checked'];
+                        Family::where('id', $collab['family_id'])->update(['email_collaborate' => $isCollaborate]);
+                    }
+                }
+            }
+            $familyEmail = null;
+            $customerContact = null;
+            $invoiceNumber = null;
+            $collaborationLink = URL::to('/customer-order-status-list');
+            $customerCollaborationLink = URL::to('/customer-collaboration-list');
+            //            $collaborationLink = URL::to('/collaboration/'.$data['order']['collaboration']['id']);
+            // if (
+            //     isset($data['order']['family']) && isset($data['order']['family']['email'])
+            //     && filter_var($data['order']['family']['email'], FILTER_VALIDATE_EMAIL)
+            // ) {
+            //     $familyEmail = $data['order']['family']['email'];
+            //     $customerContact = $data['order']['family']['contact'];
+            //     $invoiceNumber = $data['order']['invoice']['invoice_number'];
+            // }
+            // if ($checkOrderStatuschanged->wasChanged('order_status_id')) {
+            //     if (!empty($familyEmail) && isset($data['order']['family']['update_customer'])) {
+            //         $this->sendMailForOrderStatusAndTask(
+            //             $familyEmail,
+            //             $collaborationLink,
+            //             $customerContact,
+            //             $invoiceNumber,
+            //             'Your order status is changed. Please check the below link.',
+            //             'Order status is updated',
+            //             'Order status'
+            //         );
+            //     }
+            // }
+            // $invoice = Invoice::where('invoice_number', $invoiceDetail['invoice_number'])->update(['date_promised' => $invoiceDetail['date_promised']]);
+
+            /**
+             * Collaboration Tasks............
+             */
+            $recordInstance = MaintenanceWorkOrder::find($data['id']);
+            foreach ($data['tasks'] as $task) {
+                $collaborationTask = WorkOrderCollaborationTask::updateOrCreate(['id' => $task['id']], $task);
+                $recordInstance->tasks()->save($collaborationTask);
+
+                if ($collaborationTask->wasChanged('assigned_to')) {
+                    if (($collaborationTask->assigned_to)) {
+                        $this->sendMailForOrderStatusAndTask(
+                            $collaborationTask->assigned_to,
+                            $customerCollaborationLink,
+                            $customerContact,
+                            $invoiceNumber,
+                            'Task Collaboration is updated. Please check the below link.',
+                            'Task Collaboration is updated',
+                            'Task Collaboration'
+                        );
+                    }
+                } else if (empty($task['id'])) {
+                    if (!empty($collaborationTask->assigned_to)) {
+                        $this->sendMailForOrderStatusAndTask(
+                            $collaborationTask->assigned_to,
+                            $customerCollaborationLink,
+                            $customerContact,
+                            $invoiceNumber,
+                            'Task Collaboration is created. Please check the below link.',
+                            'Task Collaboration is created',
+                            'Task Collaboration'
+                        );
+                    }
+                }
+
+                if ($task['id'] == 0 && filter_var($task['assigned_to'], FILTER_VALIDATE_EMAIL)) {
+                    $task['order'] = $data['order']['id'];
+                    $department = Department::find($task['department_id']);
+                    $task['department'] = $department;
+                    if (!empty($department->notify));
+                    $this->sendNotification($department);
+                }
+            }
+
+            $recordInstance->save();
+            $recordInstance->load($this->relations);
+            $recordInstance->collaborator_checks = $this->filterCollaboratorCheck($recordInstance->id);
+            return response()->json($recordInstance);
+        } catch (\QueryException $e) {
+            return response()->json($e);
+        }
+    }
+
+    public function sendMail(Request $request)
+    {
+
+        try {
+            $collaboratorMail = new WorkOrderCollaboratorMail();
+            $data = $request->all();
+            // $data = json_decode($request->data, true);
+            //$obj = $data['sendTo'][0];
+            //dd($obj);
+            $collaborationID = null;
+            $rules = [
+                'email' => 'required|email'
+            ];
+            $params['message'] = $data['message'];
+            $params['work_order_id'] = $data['work_order_id'];
+            $params['link'] = $data['link'];
+            $sentByName = Auth::user()->name;
+            $sendDate = Carbon::now();
+
+            if ($params['link']) {
+                $work_order_id = Crypt::encryptString($data['work_order_id']);
+                $params['redirect_link'] = URL::to('/upload-files/' . $work_order_id);
+            }
+
+            foreach ($data['sendTo'] as $user) {
+                $collaboratorArray = [];
+                $params['name'] = $user['first_name'];
+                $validator = Validator::make($user, $rules);
+
+                if ($validator->fails())
+                    return response()->json($validator->errors()->all());
+                Mail::to($user['email'])->send(new CollaborationMail($params));
+
+                $collaboratorArray['date'] = $sendDate;
+                $collaboratorArray['sent_by'] = $sentByName;
+                $collaboratorArray['send_to'] = $params['name'];
+                $collaboratorArray['content'] = $params['message'];
+                $collaboratorArray['attachment'] = $params['link'];
+                $collaboratorArray['work_order_id'] = $user['work_order_id'];
+
+                $collaboratorMail::create($collaboratorArray);
+            }
+            $collaborators = WorkOrderCollaboratorMail::where('work_order_id', $data['work_order_id'])->get();
+            return response()->json(['status' => 'sent', 'totalRecords' => $collaborators]);
+        } catch (Exception $e) {
+            Log::info("Error occur: " . $e->getMessage());
+            ProcessException::dispatch($e->getMessage());
+            return response()->json($e);
+        }
+    }
+
+    public function sendNotification($department)
+    {
+
+        Notification::send($department, new TaskNotification($department));
+    }
+
+    public function uploadImage(Request $request)
+    {
+
+        try {
+            $data = json_decode($request->data, true);
+            $collaboration = MaintenanceWorkOrder::find($data['work_order_id']);
+            if ($request->hasFile('image_file')) {
+
+                $collaborationImage = new WorkOrderCollaborationImage();
+                $uploadObj = new \stdClass();
+                $uploadObj->file = $request->file('image_file');
+                $uploadObj->path = 'maintenanceWorkOrder/';
+                $uploadObj->module = 'collaboration';
+                $file = $this->upload($uploadObj);
+                $collaborationImage->name = $file->filenameWithExt;
+                $collaborationImage->uploaded_by = Auth::user()->name;
+                $collaborationImage->user_id = Auth::user()->id;
+                $collaborationImage->size = $file->size;
+                $collaborationImage->path = 'images/' . $uploadObj->path . $file->filenameToStore;
+                $collaborationImage->status = $data['uploaded_from'];
+                $collaborationImage->sent_mail = 0;
+
+                $collaborationImage->save();
+                $collaboration->images()->save($collaborationImage);
+                return response()->json($collaborationImage->load(['orderLogs.user']));
+            }
+        } catch (Exception $e) {
+            Log::info("Error occur: " . $e->getMessage());
+            // ProcessException::dispatch($e->getMessage());
+            return response()->json($e);
+        }
+    }
+
+    public function updateImage(Request $request)
+    {
+        try {
+            $data = $request->all();
+            // $data = json_decode($request->data, true);
+            $collaborationImage = WorkOrderCollaborationImage::updateOrCreate(['id' => $data['id']], $data);
+            return response()->json($collaborationImage->load(['user', 'rejectedBy.role', 'orderLogs.user']));
+        } catch (Exception $e) {
+            Log::info("Error occur: " . $e->getMessage());
+            return response()->json($e);
+            ProcessException::dispatch($e->getMessage());
+        }
+    }
+
+    public function sendCustomerViewMail(Request $request)
+    {
+
+        try {
+            $data = $request->all();
+            // $data = json_decode($request->data, true);
+
+            $rules = [
+                'email' => 'required|email'
+            ];
+
+            $params['message'] = $data['message'];
+            $params['work_order_id'] = $data['work_order_id'];
+            $params['link'] = $data['link'];
+
+            if ($params['link'])
+                $params['redirect_link'] = URL::to($data['link']);
+
+            foreach ($data['sendTo'] as $user) {
+                $params['name'] = $user['first_name'];
+                $validator = Validator::make($user, $rules);
+                if ($validator->fails())
+                    return response()->json($validator->errors()->all());
+                Mail::to($user['email'])->send(new CustomerViewMail($params));
+            }
+
+            return response()->json('sent');
+        } catch (Exception $e) {
+            ProcessException::dispatch($e->getMessage());
+            return response()->json($e->getMessage());
+        }
+    }
+
+    public function deleteFile(Request $request)
+    {
+        try {
+
+            $image = WorkOrderCollaborationImage::find($request->id);
+            if (!str_contains($image->path, 'approval-monument')) {
+                if (file_exists($image->path))
+                    unlink($image->path);
+            }
+            $image->delete();
+            return response()->json(WorkOrderLog::orderBy('created_at', 'desc')->with('user')->first());
+        } catch (Exception $e) {
+            ProcessException::dispatch($e->getMessage());
+            return response()->json($e);
+        }
+    }
+
+    public function sendApprovalMail(Request $request)
+    {
+
+        try {
+            $data = $request->all();
+            // $data = json_decode($request->data, true);
+            $currentUserId = Auth::user()->id;
+            $work_order_id = $data['work_order_id'];
+            $rules = [
+                'email' => 'required|email'
+            ];
+
+            $params['message'] = $data['message'];
+            $params['work_order_id'] = $data['work_order_id'];
+            $params['link'] = $data['link'];
+
+            if ($params['link']) {
+                if (!isset($data['redirect'])) {
+                    $params['redirect_link'] = URL::to($data['link']);
+                    $params['mps_collaboration_link'] = URL::to('/maintenanceWorkOrder/' . $work_order_id);
+                }
+            }
+            foreach ($data['sendTo'] as $user) {
+                $params['name'] = $user['first_name'];
+                $validator = Validator::make($user, $rules);
+                if ($validator->fails())
+                    return response()->json($validator->errors()->all());
+                Mail::to($user['email'])->send(new ApprovalMail($params));
+                WorkOrderLog::create([
+                    'user_id' => $currentUserId,
+                    'work_order_id' => $work_order_id ?? '',
+                    'log' => 'Email sent to ' . $user['first_name'],
+                    'notes' => $params['message'],
+                    'date' => date('m/d/Y', strtotime(now()))
+                ]);
+            }
+
+            return response()->json('sent');
+        } catch (Exception $e) {
+            ProcessException::dispatch($e->getMessage());
+            return response()->json($e->getMessage());
+        }
     }
 }

@@ -1,5 +1,10 @@
 @component('mail::message')
+ 
+@if(isset($param["order"]))
 # Customer View Mail for Order #{{ $params['order'] }}
+@else
+# Customer View Mail for Work Order #{{ $params['work_order_id'] }}
+@endif
 
 Hi, {{ $params['name'] }} <br>
 {{ $params['message'] }}
