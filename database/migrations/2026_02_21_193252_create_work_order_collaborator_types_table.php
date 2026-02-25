@@ -15,6 +15,7 @@ class CreateWorkOrderCollaboratorTypesTable extends Migration
     {
         Schema::create('work_order_collaborator_types', function (Blueprint $table) {
             $table->id();
+            $table->string('title');
             $table->timestamps();
         });
     }
