@@ -21,6 +21,7 @@ use App\Models\WorkOrderCollaborationTask;
 use App\Models\WorkOrderCollaborator;
 use App\Models\WorkOrderCollaboratorMail;
 use App\Models\WorkOrderLog;
+use App\Models\WorkOrderPayment;
 use App\Models\WorkOrderProduct;
 use Carbon\Carbon;
 use Exception;
@@ -37,7 +38,7 @@ use Illuminate\Support\Facades\Log;
 class MaintenanceWorkOrderController extends Controller
 {
     use Accessible, Paginateable, Searchable, FileUpload;
-    public $relations = ['tasks', 'collaboratorMail', 'images.user.role', 'images.rejectedBy.role', 'collaborators.type', 'orderLogs.user', 'collaboratorChecks', 'collaboratorChecks.type', 'products'];
+    public $relations = ['tasks', 'collaboratorMail', 'images.user.role', 'images.rejectedBy.role', 'collaborators.type', 'orderLogs.user', 'collaboratorChecks', 'collaboratorChecks.type', 'products','payments'];
 
     public function index()
     {
@@ -85,9 +86,12 @@ class MaintenanceWorkOrderController extends Controller
                 "collaboratorMail",
                 "orderLogs",
                 "collaboratorChecks",
-                "products"
+                "products",
+                "payments"
             ]);
+            $workOrder = MaintenanceWorkOrder::withSum('payments', 'amount')->find($maintenanceWorkOrder->id);
 
+            $res["total_paid_amount"] = $workOrder->payments_sum_amount;
             $all_collabs = WorkOrderCollaborator::all();
             $res["collaborators"] = $all_collabs;
             return response()->json($res);
@@ -255,45 +259,55 @@ class MaintenanceWorkOrderController extends Controller
              * Products.........
              */
             foreach ($data['products'] as $product) {
-                $collaborationTask = WorkOrderProduct::updateOrCreate(['id' => $product['id']], $product);
+                $product["total"] = ($product["price"] * $product["quantity"]);
+                $id = $product['id'] ?? null;
 
-                if (empty($product['id'])) {
-                    if (!empty($collaborationTask->assigned_to)) {
-                        $this->sendMailForOrderStatusAndTask(
-                            $collaborationTask->assigned_to,
-                            $customerCollaborationLink,
-                            $customerContact,
-                            $invoiceNumber,
-                            'Work order task collaboration is created. Please check the below link.',
-                            'Work Order Task Collaboration is created',
-                            'Work Order Task Collaboration'
-                        );
-                    }
-                } else {
-                    if (($collaborationTask->assigned_to)) {
-                        $this->sendMailForOrderStatusAndTask(
-                            $collaborationTask->assigned_to,
-                            $customerCollaborationLink,
-                            $customerContact,
-                            $invoiceNumber,
-                            'Work order task collaboration is updated. Please check the below link.',
-                            'Work Order Task Collaboration is updated',
-                            'Work Order Task Collaboration'
-                        );
-                    }
-                }
+                $productRecord = WorkOrderProduct::updateOrCreate(
+                    ['id' => $id],
+                    [
+                        "product_id" =>  $product["product_id"],
+                        "work_order_id" =>  $product["work_order_id"],
+                        "type" =>  $product["type"],
+                        "item_name" =>  $product["item_name"],
+                        "product_number" =>  $product["product_number"],
+                        "price" =>  $product["price"],
+                        "quantity" =>  $product["quantity"],
+                        "total" =>  $product["total"],
+                    ]
+                );
+                
+            }
+            
+            /***
+             * Payments track
+            */
 
-                if ($product['id'] == 0 && filter_var($product['assigned_to'], FILTER_VALIDATE_EMAIL)) {
-                    $department = Department::find($product['department_id']);
-                    $product['department'] = $department;
-                    if (!empty($department->notify));
-                    $this->sendNotification($department);
-                }
+            foreach ($data['payments'] as $payment) {
+                WorkOrderPayment::updateOrCreate(
+                    ['id' => $payment["id"]],
+                    [
+                        "type" =>  $payment["type"],
+                        "amount" =>  $payment["amount"],
+                        "details" =>  $payment["details"],
+                        "work_order_id" =>  $payment["work_order_id"],
+                        "date" =>  $payment["date"],
+                    ]
+                );
+                
             }
 
             $recordInstance->save();
             $recordInstance->load($this->relations);
             $recordInstance->collaborator_checks = $this->filterCollaboratorCheck($recordInstance->id);
+
+            // Payment Summary................
+            $workOrder = MaintenanceWorkOrder::withSum('payments', 'amount')->find($recordInstance->id);
+            $recordInstance["total_paid_amount"] = $workOrder->payments_sum_amount;
+
+            $workOrder = MaintenanceWorkOrder::withSum('products', 'total')->find($recordInstance->id);
+            $recordInstance["total_amount"] = $workOrder->products_sum_total;
+
+
             return response()->json($recordInstance);
         } catch (\QueryException $e) {
             return response()->json($e);
