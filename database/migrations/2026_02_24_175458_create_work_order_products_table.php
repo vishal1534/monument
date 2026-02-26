@@ -17,8 +17,9 @@ class CreateWorkOrderProductsTable extends Migration
             $table->id();
             $table->bigInteger('product_id')->unsigned()->nullable();
             $table->bigInteger('work_order_id')->unsigned()->nullable();
-            $table->tinyInteger('type')->unsigned()->default(0);
             $table->string('item_name', 255)->nullable();
+            $table->string('type', 255)->nullable();
+            $table->string('product_type', 255)->nullable();
             $table->string('product_number', 255)->nullable();
             $table->float('price')->default(0)->nullable();
             $table->integer('quantity')->default(0)->nullable();
