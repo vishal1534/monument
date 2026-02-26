@@ -29,35 +29,39 @@ class MaintenanceWorkOrder extends Model
 
     public function tasks()
     {
-        return $this->hasMany(WorkOrderCollaborationTask::class,"work_order_id")->orderBy('id', 'asc');
+        return $this->hasMany(WorkOrderCollaborationTask::class, "work_order_id")->orderBy('id', 'asc');
     }
 
     public function collaborators()
     {
-        return $this->hasMany(WorkOrderCollaborator::class,"work_order_id");
+        return $this->hasMany(WorkOrderCollaborator::class, "work_order_id");
     }
 
     public function images()
     {
         //        return $this->hasMany(CollaborationImage::class)->orderBy('id', 'desc');
-        return $this->hasMany(WorkOrderCollaborationImage::class,"work_order_id")->orderBy('updated_at', 'desc');
+        return $this->hasMany(WorkOrderCollaborationImage::class, "work_order_id")->orderBy('updated_at', 'desc');
     }
 
     public function collaboratorMail()
     {
-        return $this->hasMany(WorkOrderCollaboratorMail::class,"work_order_id");
+        return $this->hasMany(WorkOrderCollaboratorMail::class, "work_order_id");
     }
     public function orderLogs()
     {
-        return $this->hasMany(WorkOrderLog::class,"work_order_id");
+        return $this->hasMany(WorkOrderLog::class, "work_order_id");
     }
 
     public function collaboratorChecks()
     {
-        return $this->hasMany(WorkOrderCollaborationCollaboratorCheck::class,"work_order_id");
+        return $this->hasMany(WorkOrderCollaborationCollaboratorCheck::class, "work_order_id");
     }
     public function products()
     {
-        return $this->hasMany(WorkOrderProduct::class,"work_order_id");
+        return $this->hasMany(WorkOrderProduct::class, "work_order_id");
+    }
+    public function payments()
+    {
+        return $this->hasMany(WorkOrderPayment::class, "work_order_id");
     }
 }

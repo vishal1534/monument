@@ -5,9 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class WorkOrderProduct extends Model
+class WorkOrderPayment extends Model
 {
     use HasFactory;
-    protected $table = "work_order_products";
+    protected $table = "work_order_payments";
     protected $guarded = ["id"];
 }
