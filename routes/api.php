@@ -989,12 +989,15 @@ Route::middleware(['api', 'auth:sanctum'])->group(function () {
 
         /* ------------------ */
         Route::post('mail', [MaintenanceWorkOrderController::class, 'sendMail']);
+        Route::post('store_data', [MaintenanceWorkOrderController::class, 'store_data']);
         Route::post('uploadImage', [MaintenanceWorkOrderController::class, 'uploadImage']);
 
         Route::middleware('permission:Collaboration,delete')->post('deleteFile/{id}', [MaintenanceWorkOrderController::class, 'deleteFile']);
 
         Route::middleware('permission:Collaboration,create')->post('updateImages', [MaintenanceWorkOrderController::class, 'updateImage']);
         Route::post('sendApprovalMail', [MaintenanceWorkOrderController::class, 'sendApprovalMail']);
+
+        Route::middleware('permission:Collaboration,delete')->post('deleteTask/{task}', [MaintenanceWorkOrderController::class, 'deleteTask']);
 
         Route::post('sendCustomerViewMail', [MaintenanceWorkOrderController::class, 'sendCustomerViewMail']);
     });
