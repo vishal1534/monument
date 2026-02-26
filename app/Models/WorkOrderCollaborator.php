@@ -33,8 +33,8 @@ class WorkOrderCollaborator extends Model
         return $this->belongsTo(WorkOrderCollaboratorType::class, 'type_id', 'id');
     }
 
-    // public function collaboratorCheck()
-    // {
-    //     return $this->hasMany(CollaborationCollaboratorCheck::class, 'collaborator_id', 'id');
-    // }
+    public function workOrderCollaborators()
+    {
+        return $this->hasMany(CollaborationCollaboratorCheck::class, 'collaborator_id', 'id');
+    }
 }
