@@ -21,6 +21,7 @@ use App\Models\WorkOrderCollaborationTask;
 use App\Models\WorkOrderCollaborator;
 use App\Models\WorkOrderCollaboratorMail;
 use App\Models\WorkOrderLog;
+use App\Models\WorkOrderProduct;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -36,7 +37,7 @@ use Illuminate\Support\Facades\Log;
 class MaintenanceWorkOrderController extends Controller
 {
     use Accessible, Paginateable, Searchable, FileUpload;
-    public $relations = ['tasks', 'collaboratorMail', 'images.user.role', 'images.rejectedBy.role', 'collaborators.type', 'orderLogs.user', 'collaboratorChecks', 'collaboratorChecks.type'];
+    public $relations = ['tasks', 'collaboratorMail', 'images.user.role', 'images.rejectedBy.role', 'collaborators.type', 'orderLogs.user', 'collaboratorChecks', 'collaboratorChecks.type', 'products'];
 
     public function index()
     {
@@ -84,10 +85,11 @@ class MaintenanceWorkOrderController extends Controller
                 "collaboratorMail",
                 "orderLogs",
                 "collaboratorChecks",
+                "products"
             ]);
 
             $all_collabs = WorkOrderCollaborator::all();
-            $res["all_collaborators"] = $all_collabs;
+            $res["collaborators"] = $all_collabs;
             return response()->json($res);
         } catch (Exception $ex) {
             ProcessException::dispatch($ex->getMessage());
@@ -175,69 +177,37 @@ class MaintenanceWorkOrderController extends Controller
     {
         try {
 
-            $data = json_decode($request->data, true);
+            $data = $request->all();
+            // $data = json_decode($request->data, true);
 
             $recordInstance = MaintenanceWorkOrder::updateOrCreate(['id' => $data['id']], $data);
-            // $invoiceDetail = $data['order']['invoice'];
-            // $checkOrderStatuschanged = Order::updateOrCreate(['id' => $data['order']['id']], $data['order']);
-            // if (isset($data['order_logs']) && !empty($data['order_logs'])) {
-            //     foreach ($data['order_logs'] as $orderLog) {
-            //         OrderLog::updateOrCreate(['id' => $orderLog['id']], $orderLog);
-            //     }
-            // }
-            if (isset($data['collaborators']) && !empty($data['collaborators'])) {
-                foreach ($data['collaborators'] as $collab) {
-                    if (isset($collab['id']) && !empty($collab['id'])) {
-                        $createCollaborator = null;
-                        $createCollaborator = WorkOrderCollaborator::updateOrCreate(['id' => $collab['id']], $collab);
-                        $id = 0;
-                        if (isset($collab['collaborator_check']) && !empty($collab['collaborator_check'])) {
-                            $id = $collab['collaborator_check'][0]['id'];
-                        }
+
+            if (isset($data['collaborator_checks']) && !empty($data['collaborator_checks'])) {
+                foreach ($data['collaborator_checks'] as $collab) {
+
+                    if (isset($collab['is_custom']) && $collab['is_custom']) {
+                        $isCollaborate = $collab['is_check'];
+                        Family::where('id', $collab['family_id'])->update(['email_collaborate' => $isCollaborate]);
+                    } else {
                         WorkOrderCollaborationCollaboratorCheck::updateOrCreate(
                             [
-                                'id' => $id
+                                'id' => $collab['id']
                             ],
                             [
                                 'work_order_id' => $recordInstance->id,
-                                'collaborator_id' => $createCollaborator->id,
-                                'is_check' => $collab['is_box_checked']
+                                'collaborator_id' => $collab['collaborator_id'],
+                                'is_check' => $collab['is_check']
                             ]
                         );
-                    } elseif (isset($collab['is_custom']) && $collab['is_custom']) {
-                        $isCollaborate = $collab['is_box_checked'];
-                        Family::where('id', $collab['family_id'])->update(['email_collaborate' => $isCollaborate]);
                     }
                 }
             }
+
             $familyEmail = null;
             $customerContact = null;
             $invoiceNumber = null;
             $collaborationLink = URL::to('/customer-order-status-list');
             $customerCollaborationLink = URL::to('/customer-collaboration-list');
-            //            $collaborationLink = URL::to('/collaboration/'.$data['order']['collaboration']['id']);
-            // if (
-            //     isset($data['order']['family']) && isset($data['order']['family']['email'])
-            //     && filter_var($data['order']['family']['email'], FILTER_VALIDATE_EMAIL)
-            // ) {
-            //     $familyEmail = $data['order']['family']['email'];
-            //     $customerContact = $data['order']['family']['contact'];
-            //     $invoiceNumber = $data['order']['invoice']['invoice_number'];
-            // }
-            // if ($checkOrderStatuschanged->wasChanged('order_status_id')) {
-            //     if (!empty($familyEmail) && isset($data['order']['family']['update_customer'])) {
-            //         $this->sendMailForOrderStatusAndTask(
-            //             $familyEmail,
-            //             $collaborationLink,
-            //             $customerContact,
-            //             $invoiceNumber,
-            //             'Your order status is changed. Please check the below link.',
-            //             'Order status is updated',
-            //             'Order status'
-            //         );
-            //     }
-            // }
-            // $invoice = Invoice::where('invoice_number', $invoiceDetail['invoice_number'])->update(['date_promised' => $invoiceDetail['date_promised']]);
 
             /**
              * Collaboration Tasks............
@@ -247,36 +217,75 @@ class MaintenanceWorkOrderController extends Controller
                 $collaborationTask = WorkOrderCollaborationTask::updateOrCreate(['id' => $task['id']], $task);
                 $recordInstance->tasks()->save($collaborationTask);
 
-                if ($collaborationTask->wasChanged('assigned_to')) {
-                    if (($collaborationTask->assigned_to)) {
-                        $this->sendMailForOrderStatusAndTask(
-                            $collaborationTask->assigned_to,
-                            $customerCollaborationLink,
-                            $customerContact,
-                            $invoiceNumber,
-                            'Task Collaboration is updated. Please check the below link.',
-                            'Task Collaboration is updated',
-                            'Task Collaboration'
-                        );
-                    }
-                } else if (empty($task['id'])) {
+                if (empty($task['id'])) {
                     if (!empty($collaborationTask->assigned_to)) {
                         $this->sendMailForOrderStatusAndTask(
                             $collaborationTask->assigned_to,
                             $customerCollaborationLink,
                             $customerContact,
                             $invoiceNumber,
-                            'Task Collaboration is created. Please check the below link.',
-                            'Task Collaboration is created',
-                            'Task Collaboration'
+                            'Work order task collaboration is created. Please check the below link.',
+                            'Work Order Task Collaboration is created',
+                            'Work Order Task Collaboration'
+                        );
+                    }
+                } else {
+                    if (($collaborationTask->assigned_to)) {
+                        $this->sendMailForOrderStatusAndTask(
+                            $collaborationTask->assigned_to,
+                            $customerCollaborationLink,
+                            $customerContact,
+                            $invoiceNumber,
+                            'Work order task collaboration is updated. Please check the below link.',
+                            'Work Order Task Collaboration is updated',
+                            'Work Order Task Collaboration'
                         );
                     }
                 }
 
                 if ($task['id'] == 0 && filter_var($task['assigned_to'], FILTER_VALIDATE_EMAIL)) {
-                    $task['order'] = $data['order']['id'];
                     $department = Department::find($task['department_id']);
                     $task['department'] = $department;
+                    if (!empty($department->notify));
+                    $this->sendNotification($department);
+                }
+            }
+
+            /**
+             * Products.........
+             */
+            foreach ($data['products'] as $product) {
+                $collaborationTask = WorkOrderProduct::updateOrCreate(['id' => $product['id']], $product);
+
+                if (empty($product['id'])) {
+                    if (!empty($collaborationTask->assigned_to)) {
+                        $this->sendMailForOrderStatusAndTask(
+                            $collaborationTask->assigned_to,
+                            $customerCollaborationLink,
+                            $customerContact,
+                            $invoiceNumber,
+                            'Work order task collaboration is created. Please check the below link.',
+                            'Work Order Task Collaboration is created',
+                            'Work Order Task Collaboration'
+                        );
+                    }
+                } else {
+                    if (($collaborationTask->assigned_to)) {
+                        $this->sendMailForOrderStatusAndTask(
+                            $collaborationTask->assigned_to,
+                            $customerCollaborationLink,
+                            $customerContact,
+                            $invoiceNumber,
+                            'Work order task collaboration is updated. Please check the below link.',
+                            'Work Order Task Collaboration is updated',
+                            'Work Order Task Collaboration'
+                        );
+                    }
+                }
+
+                if ($product['id'] == 0 && filter_var($product['assigned_to'], FILTER_VALIDATE_EMAIL)) {
+                    $department = Department::find($product['department_id']);
+                    $product['department'] = $department;
                     if (!empty($department->notify));
                     $this->sendNotification($department);
                 }
@@ -486,6 +495,32 @@ class MaintenanceWorkOrderController extends Controller
         } catch (Exception $e) {
             ProcessException::dispatch($e->getMessage());
             return response()->json($e->getMessage());
+        }
+    }
+
+    private function filterCollaboratorCheck($collaborationId)
+    {
+        $collaborator = WorkOrderCollaborator::with(['type', 'workOrderCollaborators' => function ($query) use ($collaborationId) {
+            $query->where('collaborator_id', $collaborationId);
+        }])
+            ->get();
+        return $collaborator->each(function ($collaborator) {
+            if (!isset($collaborator->collaboratorCheck[0])) {
+                $collaborator->is_box_checked = 0;
+            }
+            if (isset($collaborator->collaboratorCheck[0])) {
+                $collaborator->is_box_checked = $collaborator->collaboratorCheck[0]['is_check'];
+            }
+        });
+    }
+
+    public function deleteTask(WorkOrderCollaborationTask $task)
+    {
+        try {
+            return response()->json($task->delete());
+        } catch (Exception $e) {
+            ProcessException::dispatch($e->getMessage());
+            return response()->json($e);
         }
     }
 }

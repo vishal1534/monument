@@ -56,4 +56,8 @@ class MaintenanceWorkOrder extends Model
     {
         return $this->hasMany(WorkOrderCollaborationCollaboratorCheck::class,"work_order_id");
     }
+    public function products()
+    {
+        return $this->hasMany(WorkOrderProduct::class,"work_order_id");
+    }
 }
