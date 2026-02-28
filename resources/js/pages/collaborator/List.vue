@@ -246,6 +246,8 @@
              * CRUD
              * */
             getColumnList: function () {
+                console.log(this.axiosParams.module);
+                
                 if (this.$store.state[this.axiosParams.module].columnList.length == 0) {
                     this.$store.dispatch('getColumnList', this.axiosParams);
                 }

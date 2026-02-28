@@ -592,7 +592,7 @@ export const isLoggedIn = function (callback, callbackError) {
     };
     const instance = axios.create();
     instance
-        .get(url, {headers: axiosConfig})
+        .get(url, { headers: axiosConfig })
         .then(response => {
             callback && callback(response);
         })
@@ -786,11 +786,11 @@ export const productCatalogRecord = function (params, callback, callbackError) {
     let data = params.filterData;
     let column = params.column;
     let module = params.methodName
-    const url = '/api/'+module+'/'+column;
+    const url = '/api/' + module + '/' + column;
     const instance = axios.create();
     instance
         .post(url, data)
-        .then(response =>{
+        .then(response => {
             callback && callback(response)
         })
         .catch(error => {

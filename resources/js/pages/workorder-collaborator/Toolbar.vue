@@ -150,7 +150,7 @@
         },
         data(){
             return {
-                axiosParams: {module: 'collaborator'},
+                axiosParams: {module: 'work-order/collaborator'},
                 searchTerm: "",
             }
         },

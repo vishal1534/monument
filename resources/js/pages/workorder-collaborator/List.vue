@@ -113,7 +113,7 @@
                                 </div>
                             </template>
                         </b-table>
-                        <Modal :module="'Collaborator'" :recordID="viewRecord" :title="'Collaborator'"></Modal>
+                        <Modal :module="'work-order/Collaborator'" :recordID="viewRecord" :title="'work-order/Collaborator'"></Modal>
                     </div>
                 </div>
             </div>
@@ -122,7 +122,7 @@
 </template>
 
 <script>
-    import {deleteRecord, fetchPaginateRecord, filterRecords} from '../../helpers/axios';
+    import {deleteRecord, fetchPaginateRecord,getColumns, filterRecords} from '../../helpers/axios';
     import Modal from '../../Modules/Modal';
     import {debounce} from "../../helpers/common";
 
@@ -150,7 +150,7 @@
                     {key: 'action', label: 'Action', parent: "custom", thClass: "px-0", tdClass: 'flexClass'}
                 ],
                 queryFields: {},
-                axiosParams: {module: 'collaborator'},
+                axiosParams: {module: 'workorder_collaborator'},
             }
         },
         metaInfo() {
@@ -180,6 +180,16 @@
                 return this.$store.state[this.axiosParams.module].busy;
             },
             filterFields() {
+    //              if (
+    //     !this.$store.state[this.axiosParams.module] ||
+    //     !this.$store.state[this.axiosParams.module].columnList
+    // ) {
+    //     return {};
+    // }
+      const moduleState = this.$store.state[this.axiosParams.module];
+    if (!moduleState || !moduleState.columnList) {
+        return {};
+    }
                 let filterObj = {};
                 let displayCounter = 0;
                 for (const [key, value] of Object.entries(this.$store.state[this.axiosParams.module].columnList)) {
@@ -205,7 +215,7 @@
                     let values = objects[1];
                     let queryObjArray = [];
                     for (let obj of values) {
-                        this.tableFields.splice(this.tableFields.length - 1, 0, obj);
+                        this.tableFields?.splice(this.tableFields?.length - 1, 0, obj);
                         let queryObj = {column: obj.key, operator: 'like', value: ''};
                         queryObjArray.push(queryObj)
                     }
@@ -234,7 +244,13 @@
                 this.$router.push('/access-denied');
         },
         mounted() {
-            this.$store.state[this.axiosParams.module].busy = true
+                console.log(this.axiosParams.module);
+
+            // this.$store.state[this.axiosParams.module].busy = true
+                if (this.$store.state[this.axiosParams.module]) {
+        this.$store.state[this.axiosParams.module].busy = true;
+    }
+
             this.getColumnList();
             this.getRecordList();
         },
@@ -246,15 +262,30 @@
              * CRUD
              * */
             getColumnList: function () {
-                if (this.$store.state[this.axiosParams.module].columnList.length == 0) {
-                    this.$store.dispatch('getColumnList', this.axiosParams);
-                }
+                getColumns(
+        { module: "work-order/collaborator" },
+        (response) => {
+            this.$store.state[this.axiosParams.module].columnList = response.data;
+        },
+        (error) => {
+            this.makeToast({
+                title: 'Error',
+                message: error.response.data.message,
+                variant: 'danger',
+                duration: 3000
+            });
+        }
+    )
+                // console.log(this.$store.state);
+                // if (this.$store.state["work-order/collaborator"].columnList.length == 0) {
+                //     this.$store.dispatch('getColumnList', "work-order/collaborator");
+                // }
             },
             changeDateFormat: function (value) {
                 return this.$store.getters.changeDateFormat(value);
             },
             getRecordList: function () {
-                fetchPaginateRecord({module: this.axiosParams.module, apiURL: 'paginateRecord', page: this.pageCurrentPage}, (response) => {
+                fetchPaginateRecord({module: "work-order/collaborator", apiURL: 'paginateRecord', page: this.pageCurrentPage}, (response) => {
                     this.setDataForPagination(response.data)
                 }, (error) => {
                     this.makeToast({title: 'Error', message: error.response.data.message, variant: 'danger', duration: 3000});
@@ -330,7 +361,7 @@
                 this.$store.state[this.axiosParams.module].busy = true
                 let tableNames = {
                     'Type': {'columnTableName': 'idInParentTable', 'foreignKey': 'type_id', 'childClassName': '\\CollaboratorType'},
-                    'Collaborators': {'columnTableName': 'collaborators', 'childClassName': ''}
+                    'workorder_Collaborators': {'columnTableName': 'workorder_collaborators', 'childClassName': ''}
                 };
                 let findParent = this.tableFields.find(obj => obj.key == this.sortByColumn)
                 if (this.sortByColumn != 'id' && tableNames[findParent.parent]) {

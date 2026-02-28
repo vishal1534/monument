@@ -188,8 +188,8 @@ let vue_global = '';
                     type_id: null,
                 },
                 saveDisabled: false,
-                axiosParams: {module: 'collaborator'},
-                axiosParamsType: {module: 'collaborator/type'},
+                axiosParams: {module: 'workorder_collaborator'},
+                axiosParamsType: {module: 'workorder_collaboratorType'},
                 searchCollaboratorType: "",
                 collaboratorTypes: [],
             }
@@ -204,6 +204,9 @@ let vue_global = '';
                 this.$router.push('/access-denied');
         },
         mounted() {
+             console.log("Full Store:", this.$store.state);
+  console.log("Auth State:", this.$store.state.auth);
+  console.log("Permissions:", this.$store.state.auth?.permissions);
             // this.formFields.store_id = this.storeID
             this.$store.state[this.axiosParams.module].busy = true
             this.formFields.id = this.$props.id ? this.$props.id : 0;
@@ -219,7 +222,7 @@ let vue_global = '';
             getCollaborator: function (id) {
                 if (id) {
                         this.axiosParams.id = id;
-                        fetchRecord(this.axiosParams, (response) => {
+                        fetchRecord({module:"work-order/collaborator"}, (response) => {
                             this.formFields = response.data
                             if (this.$store.state[this.axiosParams.module].recordList.length > 0)
                                 this.$store.state[this.axiosParams.module].busy = false
@@ -231,8 +234,8 @@ let vue_global = '';
             },
             getRecords: function () {
                 if (!this.hideInModal){
-                    this.$store.dispatch('getDropDownInfo', {module: this.axiosParams.module, apiURL: 'getDropDownRecord', page: this.pageNumber})
-                    fetchRecords({module: 'collaborator/type'}, (response) => {
+                    this.$store.dispatch('getDropDownInfo', {module: 'work-order/collaborator/type', apiURL: 'getDropDownRecord', page: this.pageNumber})
+                    fetchRecords({module: 'work-order/collaborator/type'}, (response) => {
                         this.collaboratorTypes = response.data;
                     });
                 }

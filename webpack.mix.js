@@ -48,7 +48,7 @@ mix.then(() => {
     }
 });
 
-function publishAssets () {
+function publishAssets() {
     const publicDir = path.resolve(__dirname, './public');
     fs.removeSync(path.join(publicDir, 'dest'));
     fs.copySync(path.join(publicDir, '/', 'dest'), path.join(publicDir, 'dest'));
@@ -56,3 +56,18 @@ function publishAssets () {
 };
 
 mix.copyDirectory('resources/assets/fonts', 'public/assets/fonts');
+
+mix.webpackConfig({
+    devServer: {
+        host: '127.0.0.1',
+        port: 8081,
+        hot: true
+    }
+});
+
+mix.options({
+    hmrOptions: {
+        host: '127.0.0.1',
+        port: 8081
+    }
+});

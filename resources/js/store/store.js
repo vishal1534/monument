@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import {authUser, cemeteryInfo, companyInfo, compositeInfo, compositeReportFilterRecord, customerOrderInfo, deliveryWorkOrderInfo, departmentInfo, fetchPaginateRecord, fetchRecords, filterRecords, getCemeteries, getColumns, getCompanies, monumentInfo, paperLocationInfo, porcelainInfo, productCatalogRecord, reportFilterRecord, reportInfo, searchProducts, serviceInfo, simpleInfo, supplierInfo, userFamiliesInfo, userInfo} from '../helpers/axios';
+import { authUser, cemeteryInfo, companyInfo, compositeInfo, compositeReportFilterRecord, customerOrderInfo, deliveryWorkOrderInfo, departmentInfo, fetchPaginateRecord, fetchRecords, filterRecords, getCemeteries, getColumns, getCompanies, monumentInfo, paperLocationInfo, porcelainInfo, productCatalogRecord, reportFilterRecord, reportInfo, searchProducts, serviceInfo, simpleInfo, supplierInfo, userFamiliesInfo, userInfo } from '../helpers/axios';
 import moment from "moment";
 
 Vue.use(Vuex);
@@ -157,14 +157,14 @@ export default new Vuex.Store({
             productList: [],
             recordList: [],
             deptList: [
-                {value: 'cemetery_dept', text: 'Cemetery Dept'},
-                {value: 'design_dept', text: 'Design Dept'},
-                {value: 'final_date_dept', text: 'Final Date Dept'},
-                {value: 'installation_dept', text: 'OrderInstallation Dept'},
-                {value: 'porcelain_dept', text: 'Porcelain Dept'},
-                {value: 'purchasing_dept', text: 'Purchasing Dept'},
-                {value: 'order_entry', text: 'Order Entry'},
-                {value: 'stencil_cutting_dept', text: 'Stencil Cutting Dept.'}
+                { value: 'cemetery_dept', text: 'Cemetery Dept' },
+                { value: 'design_dept', text: 'Design Dept' },
+                { value: 'final_date_dept', text: 'Final Date Dept' },
+                { value: 'installation_dept', text: 'OrderInstallation Dept' },
+                { value: 'porcelain_dept', text: 'Porcelain Dept' },
+                { value: 'purchasing_dept', text: 'Purchasing Dept' },
+                { value: 'order_entry', text: 'Order Entry' },
+                { value: 'stencil_cutting_dept', text: 'Stencil Cutting Dept.' }
             ],
             showHidePDF: false,
             currentRecord: [],
@@ -470,6 +470,24 @@ export default new Vuex.Store({
             type: [],
             isFiltered: false,
         },
+        workorder_collaborator: {
+            recordList: [],
+            columnList: [],
+            firstRecord: [],
+            lastRecord: [],
+            busy: true,
+            type: [],
+            isFiltered: false,
+        },
+        workorder_collaboratorType: {
+            recordList: [],
+            columnList: [],
+            firstRecord: [],
+            lastRecord: [],
+            busy: true,
+            isFiltered: false,
+        },
+
         collaboratorType: {
             recordList: [],
             columnList: [],
@@ -487,7 +505,7 @@ export default new Vuex.Store({
             busy: true,
             isFiltered: false,
         },
-        correspondenceTask:{
+        correspondenceTask: {
             recordList: [],
             columnList: [],
             firstRecord: [],
@@ -511,9 +529,9 @@ export default new Vuex.Store({
         },
         listNumberOfRecord: {
             recordList: [
-                {value: '10', text: '10'},
-                {value: '25', text: '25'},
-                {value: '50', text: '50'},
+                { value: '10', text: '10' },
+                { value: '25', text: '25' },
+                { value: '50', text: '50' },
             ],
         },
         checkChangeFormEdit: {
@@ -621,7 +639,7 @@ export default new Vuex.Store({
             for (let obj of state.installation.recordList) {
                 console.log(payload);
                 if (obj.id == payload.id)
-                    obj[payload.detail] = {id: 0, installation_id: payload.id};
+                    obj[payload.detail] = { id: 0, installation_id: payload.id };
             }
         },
         removeOrderDetail: (state, payload) => {
@@ -1138,24 +1156,24 @@ export default new Vuex.Store({
         getAccountingTableData: state => {
             let records = [...state.accounting.recordList];
             for (let key in records) {
-                let obj = {...records[key]};
+                let obj = { ...records[key] };
                 if (obj.order != null) {
-                    obj = {...obj.order, ...obj}
+                    obj = { ...obj.order, ...obj }
                     records[key] = obj;
                     if (obj.order.invoice != null) {
-                        obj = {...obj.order.invoice, ...obj}
+                        obj = { ...obj.order.invoice, ...obj }
                         records[key] = obj;
                     }
                     if (obj.order.family != null) {
-                        obj = {...obj.order.family, ...obj}
+                        obj = { ...obj.order.family, ...obj }
                         records[key] = obj;
                     }
                     if (obj.order_status != null) {
-                        obj = {...obj.order_status, ...obj}
+                        obj = { ...obj.order_status, ...obj }
                         records[key] = obj
                     }
                     if (obj.order_type != null && typeof obj.order_type === 'object') {
-                        obj = {...obj.order_type, ...obj}
+                        obj = { ...obj.order_type, ...obj }
                         records[key] = obj
                     }
                 }
@@ -1171,30 +1189,30 @@ export default new Vuex.Store({
             let records = [...state.cemetery.recordList];
             for (let key in records) {
 
-                let obj = {...records[key]};
+                let obj = { ...records[key] };
 
                 if (obj.regulation != null) {
-                    obj = {...obj.regulation, ...obj}
+                    obj = { ...obj.regulation, ...obj }
                     records[key] = obj;
                 }
 
                 if (obj.category != null) {
-                    obj = {...obj.category, ...obj}
+                    obj = { ...obj.category, ...obj }
                     records[key] = obj;
                 }
 
                 if (obj.city != null) {
-                    obj = {...obj.city, ...obj}
+                    obj = { ...obj.city, ...obj }
                     records[key] = obj;
                 }
 
                 if (obj.county != null) {
-                    obj = {...obj.county, ...obj}
+                    obj = { ...obj.county, ...obj }
                     records[key] = obj;
                 }
 
                 if (obj.state != null) {
-                    obj = {...obj.state, ...obj}
+                    obj = { ...obj.state, ...obj }
                     records[key] = obj;
                 }
             }
@@ -1218,10 +1236,10 @@ export default new Vuex.Store({
         getCompanyTableData: state => {
             let records = [...state.company.recordList];
             for (let key in records) {
-                let obj = {...records[key]};
+                let obj = { ...records[key] };
 
                 if (obj.role != null) {
-                    obj = {...obj.role, ...obj}
+                    obj = { ...obj.role, ...obj }
                     records[key] = obj
                 }
             }
@@ -1234,7 +1252,7 @@ export default new Vuex.Store({
         getUserTableData: state => {
             let records = [...state.user.recordList];
             for (let key in records) {
-                let obj = {...records[key]};
+                let obj = { ...records[key] };
 
                 if (obj.role != null) {
                     let getTitle = obj.role;
@@ -1255,10 +1273,10 @@ export default new Vuex.Store({
         getPaperLocationTableData: state => {
             let records = [...state.paperLocation.recordList];
             for (let key in records) {
-                let obj = {...records[key]};
+                let obj = { ...records[key] };
 
                 if (obj.location_title != null) {
-                    obj = {...obj.location_title, ...obj}
+                    obj = { ...obj.location_title, ...obj }
                     records[key] = obj
                 }
             }
@@ -1267,9 +1285,9 @@ export default new Vuex.Store({
         getResourceTableDate: state => {
             let records = [...state.userResources.recordList];
             for (let key in records) {
-                let obj = {...records[key]};
+                let obj = { ...records[key] };
                 if (obj.title != null) {
-                    obj = {...obj.title, ...obj}
+                    obj = { ...obj.title, ...obj }
                     records[key] = obj
                 }
             }
@@ -1281,9 +1299,9 @@ export default new Vuex.Store({
         getOrderStatusTableDate: state => {
             let records = [...state.orderStatus.recordList];
             for (let key in records) {
-                let obj = {...records[key]};
+                let obj = { ...records[key] };
                 if (obj.title != null) {
-                    obj = {...obj.title, ...obj}
+                    obj = { ...obj.title, ...obj }
                     records[key] = obj
                 }
             }
@@ -1296,10 +1314,10 @@ export default new Vuex.Store({
 
             let records = [...state.composite.recordList];
             for (let key in records) {
-                let obj = {...records[key]};
+                let obj = { ...records[key] };
 
                 if (obj.category != null) {
-                    obj = {...obj.category, ...obj}
+                    obj = { ...obj.category, ...obj }
                     records[key] = obj
                 }
             }
@@ -1319,28 +1337,28 @@ export default new Vuex.Store({
         getCollaborationTableData: state => (params) => {
             let records = [...state[params.module].recordList];
             for (let key in records) {
-                let obj = {...records[key]};
+                let obj = { ...records[key] };
                 if (obj.order != null) {
-                    obj = {...obj.order, ...obj}
+                    obj = { ...obj.order, ...obj }
                     records[key] = obj;
                     if (obj.order.invoice != null) {
-                        obj = {...obj.order.invoice, ...obj}
+                        obj = { ...obj.order.invoice, ...obj }
                         records[key] = obj;
                     }
                     if (obj.order.family != null) {
-                        obj = {...obj.order.family, ...obj}
+                        obj = { ...obj.order.family, ...obj }
                         records[key] = obj;
                     }
                     if (obj.order_status != null) {
-                        obj = {...obj.order_status, ...obj}
+                        obj = { ...obj.order_status, ...obj }
                         records[key] = obj
                     }
                     if (obj.order.order_type != null && typeof obj.order.order_type === 'object') {
-                        obj = {...obj.order.order_type, ...obj}
+                        obj = { ...obj.order.order_type, ...obj }
                         records[key] = obj
                     }
                     if (obj.order.paper_location != null && typeof obj.order.paper_location === 'object') {
-                        obj = {...obj.order.paper_location, ...obj}
+                        obj = { ...obj.order.paper_location, ...obj }
                         records[key] = obj
                     }
                 }
@@ -1350,17 +1368,17 @@ export default new Vuex.Store({
         getCollaborationTaskData: state => {
             let records = [...state.collaborationTask.recordList];
             for (let key in records) {
-                let obj = {...records[key]};
-                if (obj.department_id != null){
-                    obj = {...obj.department, ...obj}
+                let obj = { ...records[key] };
+                if (obj.department_id != null) {
+                    obj = { ...obj.department, ...obj }
                     records[key] = obj
                 }
-                if (obj.collaboration.order.invoice != null){
-                    obj = {...obj.collaboration.order.invoice , ...obj}
+                if (obj.collaboration.order.invoice != null) {
+                    obj = { ...obj.collaboration.order.invoice, ...obj }
                     records[key] = obj
                 }
-                if (obj.collaboration.order.family != null){
-                    obj = {...obj.collaboration.order.family , ...obj}
+                if (obj.collaboration.order.family != null) {
+                    obj = { ...obj.collaboration.order.family, ...obj }
                     records[key] = obj
                 }
             }
@@ -1369,13 +1387,13 @@ export default new Vuex.Store({
         getCorrespondenceTaskData: state => {
             let records = [...state.correspondenceTask.recordList];
             for (let key in records) {
-                let obj = {...records[key]};
-                if (obj.correspondence.order.invoice != null){
-                    obj = {...obj.correspondence.order.invoice , ...obj}
+                let obj = { ...records[key] };
+                if (obj.correspondence.order.invoice != null) {
+                    obj = { ...obj.correspondence.order.invoice, ...obj }
                     records[key] = obj
                 }
-                if (obj.correspondence.order.family != null){
-                    obj = {...obj.correspondence.order.family , ...obj}
+                if (obj.correspondence.order.family != null) {
+                    obj = { ...obj.correspondence.order.family, ...obj }
                     records[key] = obj
                 }
             }
@@ -1394,9 +1412,9 @@ export default new Vuex.Store({
         getCollaboratorTableDate: state => {
             let records = [...state.collaborator.recordList];
             for (let key in records) {
-                let obj = {...records[key]};
+                let obj = { ...records[key] };
                 if (obj.type != null) {
-                    obj = {...obj.type, ...obj}
+                    obj = { ...obj.type, ...obj }
                     records[key] = obj;
                 }
             }
@@ -1433,31 +1451,31 @@ export default new Vuex.Store({
             let records = [...state.installation.recordList];
             for (let key in records) {
 
-                let obj = {...records[key]};
+                let obj = { ...records[key] };
 
                 if (obj.order != null) {
 
-                    obj = {...obj.order, ...obj}
+                    obj = { ...obj.order, ...obj }
                     records[key] = obj;
 
                     if (obj.order.invoice != null) {
-                        obj = {...obj.order.invoice, ...obj}
+                        obj = { ...obj.order.invoice, ...obj }
                         records[key] = obj;
                     }
                     if (obj.order.family != null) {
-                        obj = {...obj.order.family, ...obj}
+                        obj = { ...obj.order.family, ...obj }
                         records[key] = obj;
                     }
                     if (obj.order.order_status != null) {
-                        obj = {...obj.order.order_status, ...obj}
+                        obj = { ...obj.order.order_status, ...obj }
                         records[key] = obj;
                     }
                     if (obj.order.order_type != null && typeof obj.order.order_type === 'object') {
-                        obj = {...obj.order.order_type, ...obj}
+                        obj = { ...obj.order.order_type, ...obj }
                         records[key] = obj;
                     }
                     if (obj.order.paper_location != null && typeof obj.order.paper_location === 'object') {
-                        obj = {...obj.order.paper_location, ...obj}
+                        obj = { ...obj.order.paper_location, ...obj }
                         records[key] = obj;
                     }
                 }
@@ -1513,42 +1531,42 @@ export default new Vuex.Store({
             let records = [...state.monument.recordList];
 
             for (let key in records) {
-                let obj = {...records[key]};
+                let obj = { ...records[key] };
 
                 if (obj.engrave != null) {
-                    obj = {...obj.engrave, ...obj}
+                    obj = { ...obj.engrave, ...obj }
                     records[key] = obj
                 }
                 if (obj.specification != null) {
-                    obj = {...obj.specification, ...obj}
+                    obj = { ...obj.specification, ...obj }
                     records[key] = obj
                 }
                 if (obj.freight != null) {
-                    obj = {...obj.freight, ...obj}
+                    obj = { ...obj.freight, ...obj }
                     records[key] = obj
                 }
                 if (obj.polish != null) {
-                    obj = {...obj.polish, ...obj}
+                    obj = { ...obj.polish, ...obj }
                     records[key] = obj
                 }
                 if (obj.installation != null) {
-                    obj = {...obj.installation, ...obj}
+                    obj = { ...obj.installation, ...obj }
                     records[key] = obj
                 }
                 if (obj.color != null) {
-                    obj = {...obj.color, ...obj}
+                    obj = { ...obj.color, ...obj }
                     records[key] = obj
                 }
                 if (obj.type != null) {
-                    obj = {...obj.type, ...obj}
+                    obj = { ...obj.type, ...obj }
                     records[key] = obj
                 }
                 if (obj.side != null) {
-                    obj = {...obj.side, ...obj}
+                    obj = { ...obj.side, ...obj }
                     records[key] = obj
                 }
                 if (obj.shape != null) {
-                    obj = {...obj.shape, ...obj}
+                    obj = { ...obj.shape, ...obj }
                     records[key] = obj
                 }
 
@@ -1566,41 +1584,41 @@ export default new Vuex.Store({
 
             let records = [...state.report.recordList];
             for (let key in records) {
-                let obj = {...records[key]};
+                let obj = { ...records[key] };
                 if (obj.engrave != null) {
-                    obj = {...obj.engrave, ...obj}
+                    obj = { ...obj.engrave, ...obj }
                     records[key] = obj
                 }
                 if (obj.specification != null) {
-                    obj = {...obj.specification, ...obj}
+                    obj = { ...obj.specification, ...obj }
                     records[key] = obj
                 }
                 if (obj.freight != null) {
-                    obj = {...obj.freight, ...obj}
+                    obj = { ...obj.freight, ...obj }
                     records[key] = obj
                 }
                 if (obj.polish != null) {
-                    obj = {...obj.polish, ...obj}
+                    obj = { ...obj.polish, ...obj }
                     records[key] = obj
                 }
                 if (obj.installation != null) {
-                    obj = {...obj.installation, ...obj}
+                    obj = { ...obj.installation, ...obj }
                     records[key] = obj
                 }
                 if (obj.color != null) {
-                    obj = {...obj.color, ...obj}
+                    obj = { ...obj.color, ...obj }
                     records[key] = obj
                 }
                 if (obj.type != null) {
-                    obj = {...obj.type, ...obj}
+                    obj = { ...obj.type, ...obj }
                     records[key] = obj
                 }
                 if (obj.side != null) {
-                    obj = {...obj.side, ...obj}
+                    obj = { ...obj.side, ...obj }
                     records[key] = obj
                 }
                 if (obj.shape != null) {
-                    obj = {...obj.shape, ...obj}
+                    obj = { ...obj.shape, ...obj }
                     records[key] = obj
                 }
                 records[key] = obj
@@ -1619,9 +1637,9 @@ export default new Vuex.Store({
         getReportCompositeTableData: state => {
             let records = [...state.compositeReport.recordList];
             for (let key in records) {
-                let obj = {...records[key]};
+                let obj = { ...records[key] };
                 if (obj.category != null) {
-                    obj = {...obj.category, ...obj}
+                    obj = { ...obj.category, ...obj }
                     records[key] = obj
                 }
             }
@@ -1669,10 +1687,10 @@ export default new Vuex.Store({
         getSimpleTableData: state => {
             let records = [...state.simple.recordList];
             for (let key in records) {
-                let obj = {...records[key]};
+                let obj = { ...records[key] };
 
                 if (obj.category != null) {
-                    obj = {...obj.category, ...obj}
+                    obj = { ...obj.category, ...obj }
                     records[key] = obj
                 }
             }
@@ -1692,10 +1710,10 @@ export default new Vuex.Store({
         getServiceTableData: state => {
             let records = [...state.service.recordList];
             for (let key in records) {
-                let obj = {...records[key]};
+                let obj = { ...records[key] };
 
                 if (obj.category != null) {
-                    obj = {...obj.category, ...obj}
+                    obj = { ...obj.category, ...obj }
                     records[key] = obj
                 }
             }
@@ -1729,30 +1747,30 @@ export default new Vuex.Store({
         getOrderTableData: state => (params) => {
             let records = [...state[params.module].recordList];
             for (let key in records) {
-                let obj = {...records[key]};
+                let obj = { ...records[key] };
 
                 if (obj.invoice != null) {
-                    obj = {...obj.invoice, ...obj}
+                    obj = { ...obj.invoice, ...obj }
                     records[key] = obj
                 }
                 if (obj.accounting != null) {
-                    obj = {...obj.accounting, ...obj}
+                    obj = { ...obj.accounting, ...obj }
                     records[key] = obj
                 }
                 if (obj.family != null) {
-                    obj = {...obj.family, ...obj}
+                    obj = { ...obj.family, ...obj }
                     records[key] = obj
                 }
                 if (obj.order_status != null) {
-                    obj = {...obj.order_status, ...obj}
+                    obj = { ...obj.order_status, ...obj }
                     records[key] = obj
                 }
                 if (obj.order_type != null && typeof obj.order_type === 'object') {
-                    obj = {...obj.order_type, ...obj}
+                    obj = { ...obj.order_type, ...obj }
                     records[key] = obj
                 }
                 if (obj.paper_location != null && typeof obj.paper_location === 'object') {
-                    obj = {...obj.paper_location, ...obj}
+                    obj = { ...obj.paper_location, ...obj }
                     records[key] = obj
                 }
             }
@@ -1766,30 +1784,30 @@ export default new Vuex.Store({
             let records = [...state[params.module].recordList];
             for (let key in records) {
 
-                let obj = {...records[key]};
+                let obj = { ...records[key] };
 
                 if (obj.order != null) {
-                    obj = {...obj.order, ...obj}
+                    obj = { ...obj.order, ...obj }
                     records[key] = obj;
 
                     if (obj.order.invoice != null) {
-                        obj = {...obj.order.invoice, ...obj}
+                        obj = { ...obj.order.invoice, ...obj }
                         records[key] = obj;
                     }
                     if (obj.order.family != null) {
-                        obj = {...obj.order.family, ...obj}
+                        obj = { ...obj.order.family, ...obj }
                         records[key] = obj;
                     }
                     if (obj.order.order_status != null) {
-                        obj = {...obj.order.order_status, ...obj}
+                        obj = { ...obj.order.order_status, ...obj }
                         records[key] = obj;
                     }
                     if (obj.order.order_type != null && typeof obj.order.order_type === 'object') {
-                        obj = {...obj.order.order_type, ...obj}
+                        obj = { ...obj.order.order_type, ...obj }
                         records[key] = obj;
                     }
                     if (obj.order.paper_location != null && typeof obj.order.paper_location === 'object') {
-                        obj = {...obj.order.paper_location, ...obj}
+                        obj = { ...obj.order.paper_location, ...obj }
                         records[key] = obj
                     }
                 }
@@ -1808,10 +1826,10 @@ export default new Vuex.Store({
             let records = [...state.productionPicture.recordList];
             for (let key in records) {
 
-                let obj = {...records[key]};
+                let obj = { ...records[key] };
 
                 if (obj.production_oc_picture != null) {
-                    obj = {...obj.production_picture, ...obj}
+                    obj = { ...obj.production_picture, ...obj }
                     records[key] = obj;
                 }
             }
@@ -1827,10 +1845,10 @@ export default new Vuex.Store({
             let records = [...state.productionLaser.recordList];
             for (let key in records) {
 
-                let obj = {...records[key]};
+                let obj = { ...records[key] };
 
                 if (obj.production_laser != null) {
-                    obj = {...obj.laser, ...obj}
+                    obj = { ...obj.laser, ...obj }
                     records[key] = obj;
                 }
             }
@@ -1845,9 +1863,9 @@ export default new Vuex.Store({
         getWorkOrderTableData: state => {
             let records = [...state.maintenanceWorkOrder.recordList];
             for (let key in records) {
-                let obj = {...records[key]};
+                let obj = { ...records[key] };
                 if (obj.maintenanceWorkOrder != null) {
-                    obj = {...obj.maintenanceWorkOrder, ...obj}
+                    obj = { ...obj.maintenanceWorkOrder, ...obj }
                     records[key] = obj;
                 }
             }
@@ -1862,10 +1880,10 @@ export default new Vuex.Store({
             let records = [...state.productionSandblasting.recordList];
             for (let key in records) {
 
-                let obj = {...records[key]};
+                let obj = { ...records[key] };
 
                 if (obj.production_sandblasting != null) {
-                    obj = {...obj.production_sandblasting, ...obj}
+                    obj = { ...obj.production_sandblasting, ...obj }
                     records[key] = obj;
                 }
             }
@@ -1880,7 +1898,7 @@ export default new Vuex.Store({
             let records = [...state.quote.recordList];
 
             for (let key in records) {
-                let obj = {...records[key]};
+                let obj = { ...records[key] };
 
                 let companyData = obj.company;
                 obj.account_number = companyData?.account_number ? companyData.account_number : '';
@@ -1900,10 +1918,10 @@ export default new Vuex.Store({
             let records = [...state.PoOrder.recordList];
 
             for (let key in records) {
-                let obj = {...records[key]};
+                let obj = { ...records[key] };
 
                 if (obj.supplier != null) {
-                    obj = {...obj.supplier, ...obj}
+                    obj = { ...obj.supplier, ...obj }
                     records[key] = obj
                 }
             }
@@ -1917,7 +1935,7 @@ export default new Vuex.Store({
             let records = [...state.userRole.recordList];
 
             for (let key in records) {
-                let obj = {...records[key]};
+                let obj = { ...records[key] };
 
                 records[key] = obj
             }
@@ -1926,9 +1944,9 @@ export default new Vuex.Store({
 
         isPermitted: (state) => (params) => {
             let permitted = false;
-            let authUser = {...state.auth};
+            let authUser = { ...state.auth };
             if (authUser.user && authUser.user.role) {
-                let permissions = {...authUser.user.role.permissions}
+                let permissions = { ...authUser.user.role.permissions }
                 for (let key in permissions)
                     if (params.resource == permissions[key].resource)
                         permitted = permissions[key][params.action];
@@ -2044,7 +2062,7 @@ export default new Vuex.Store({
         changeNumberFormat: state => (params) => {
             if (params) {
                 if (Number.isInteger(parseFloat(params))) {
-                    return parseFloat(params).toLocaleString('en-US', {style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2});
+                    return parseFloat(params).toLocaleString('en-US', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 });
                 }
                 return new Intl.NumberFormat().format(params);
             }
@@ -2123,7 +2141,7 @@ export default new Vuex.Store({
             })
             let currentIndex = data.findIndex(findIn => findIn.value == 'currentDate')
             if (currentIndex === -1) {
-                data.push({value: 'currentDate', text: '"Today\'s Date"'})
+                data.push({ value: 'currentDate', text: '"Today\'s Date"' })
             }
         },
         getCurrentStoreID: () => {
