@@ -78,7 +78,7 @@ Route::middleware('auth:sanctum')->get('/authenticated', function () {
     return true;
 });
 Route::post('register', [UserController::class, 'register']);
-Route::get('user/user_role',[UserController::class,'updateUserRole']);
+Route::get('user/user_role', [UserController::class, 'updateUserRole']);
 Route::post('login', [UserController::class, 'login']);
 Route::middleware('auth:sanctum')->post('logout', [UserController::class, 'logout']);
 Route::post('forgetPassword', [UserController::class, 'forgetPassword']);
@@ -244,21 +244,23 @@ Route::middleware(['api', 'auth:sanctum'])->group(function () {
     /**
      * Work-Order Collaborator Routes
      */
-    Route::prefix('work-order')->group(function () {
-        Route::prefix('collaborator')->group(function () {
-            Route::middleware('permission:Collaboration,read')->get('paginateRecord', [WorkOrderCollaboratorsController::class, 'paginationRecord']);
-            Route::middleware('permission:Collaboration,read')->get('getDropDownRecord', [WorkOrderCollaboratorsController::class, 'dropDownInfo']);
-            Route::middleware('permission:Collaboration,read')->get('next/{collaborator}', [WorkOrderCollaboratorsController::class, 'getNextPrevious']);
-            Route::middleware('permission:Collaboration,read')->get('previous/{collaborator}', [WorkOrderCollaboratorsController::class, 'getNextPrevious']);
-            Route::middleware('permission:Collaboration,read')->get('columns', [WorkOrderCollaboratorsController::class, 'getColumns']);
-            Route::middleware('permission:Collaboration,read')->post('search', [WorkOrderCollaboratorsController::class, 'search']);
-            Route::middleware('permission:Collaboration,read')->get('types', [CollaborationController::class, 'collaboratorTypes']);
-            Route::middleware('permission:Collaboration,read')->get('type', [WorkOrderCollaboratorsController::class, 'getCollaboratorType']);
-            Route::middleware('permission:Collaboration,read')->post('type', [WorkOrderCollaboratorsController::class, 'saveCollaboratorType']);
-            Route::middleware('permission:Collaboration,read')->delete('type/{collaboratorType}', [WorkOrderCollaboratorsController::class, 'deleteCollaboratorType']);
-        });
-        Route::middleware('permission:Collaboration,resource')->resource('collaborator', WorkOrderCollaboratorsController::class);
+    Route::prefix('work_order_collaborator')->group(function () {
+        Route::middleware('permission:Collaboration,read')->get('paginateRecord', [WorkOrderCollaboratorsController::class, 'paginationRecord']);
+        Route::middleware('permission:Collaboration,read')->get('getDropDownRecord', [WorkOrderCollaboratorsController::class, 'dropDownInfo']);
+        Route::middleware('permission:Collaboration,read')->get('next/{collaborator}', [WorkOrderCollaboratorsController::class, 'getNextPrevious']);
+        Route::middleware('permission:Collaboration,read')->get('previous/{collaborator}', [WorkOrderCollaboratorsController::class, 'getNextPrevious']);
+        Route::middleware('permission:Collaboration,read')->get('columns', [WorkOrderCollaboratorsController::class, 'getColumns']);
+        Route::middleware('permission:Collaboration,read')->post('search', [WorkOrderCollaboratorsController::class, 'search']);
+        Route::middleware('permission:Collaboration,read')->get('types', [CollaborationController::class, 'collaboratorTypes']);
+        Route::middleware('permission:Collaboration,read')->get('type', [WorkOrderCollaboratorsController::class, 'getCollaboratorType']);
+        Route::middleware('permission:Collaboration,read')->post('type', [WorkOrderCollaboratorsController::class, 'saveCollaboratorType']);
+        Route::middleware('permission:Collaboration,read')->delete('type/{collaboratorType}', [WorkOrderCollaboratorsController::class, 'deleteCollaboratorType']);
     });
+
+    Route::resource('work_order_collaborator', WorkOrderCollaboratorsController::class)
+        ->parameters([
+            'work_order_collaborator' => 'collaborator'
+        ]);
 
 
 
@@ -335,7 +337,7 @@ Route::middleware(['api', 'auth:sanctum'])->group(function () {
     Route::group([
         'prefix' => 'costPerSqureFeet',
         'middleware' => 'permission:Setting,read'
-    ], function (){
+    ], function () {
         Route::get('columns', [CostPSqureFeetController::class, 'getColumns']);
         Route::get('getDropDownRecord', [CostPSqureFeetController::class, 'dropDownInfo']);
         Route::get('next/{feet}', [CostPSqureFeetController::class, 'getNext']);
@@ -629,7 +631,6 @@ Route::middleware(['api', 'auth:sanctum'])->group(function () {
         Route::middleware('permission:Orders,create')->post('approvalMonument', [orderController::class, 'saveApprovalMonument']);
         Route::middleware('permission:Orders,create')->post('syncOrdersApi', [orderController::class, 'syncOrdersApi']);
         Route::middleware('permission:Orders,create')->post('uploadOrderImage', [orderController::class, 'uploadOrderImage']);
-
     });
     Route::middleware('permission:Orders,resource')->resource('order', OrderController::class);
 
@@ -646,7 +647,6 @@ Route::middleware(['api', 'auth:sanctum'])->group(function () {
         Route::get('showOrder/{order}', [orderController::class, 'showCustomerOrder']);
         Route::get('companyInfo', [CompanyController::class, 'index']);
         Route::get('cemeteryInfo', [CemeteryController::class, 'index']);
-
     });
 
     /**
@@ -660,7 +660,6 @@ Route::middleware(['api', 'auth:sanctum'])->group(function () {
         Route::get('orderStatusInfo', [ProductionController::class, 'customerOrderStatus']);
         Route::post('search', [ProductionController::class, 'searchCustomerOrderStatus']);
         Route::get('production/{production}', [ProductionController::class, 'show']);
-
     });
 
     /**
@@ -674,7 +673,6 @@ Route::middleware(['api', 'auth:sanctum'])->group(function () {
         Route::get('approvalInfo', [CollaborationController::class, 'customerApproval']);
         Route::post('search', [CollaborationController::class, 'searchCustomerApproval']);
         Route::get('approval/{collaboration}', [CollaborationController::class, 'show']);
-
     });
 
     /**
@@ -1087,6 +1085,6 @@ Route::middleware(['api', 'auth:sanctum'])->group(function () {
     /**
      *  Sync Order List Route
      * */
-//    Route::post('syncOrders', [OrderController::class, 'syncOrders']);
+    //    Route::post('syncOrders', [OrderController::class, 'syncOrders']);
 
 });
